@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel
 from werkzeug.security import generate_password_hash
 from typing import Optional
 
@@ -21,5 +21,5 @@ class AuthSchema(BaseModel):
         return {
             'email': self.email,
             'password': hashed_password,
-            'name': self.name,
+            'name': self.name
         }
