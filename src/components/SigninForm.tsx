@@ -26,6 +26,7 @@ const externalSigninStyle = `
 type signinType = {
     email: string,
     password: string,
+    name: string
   }
 
 const SigninForm: React.FC<{setIsSignup: React.Dispatch<React.SetStateAction<boolean>>}> = ({setIsSignup}) => {
@@ -33,6 +34,7 @@ const SigninForm: React.FC<{setIsSignup: React.Dispatch<React.SetStateAction<boo
     const [signinFormData, setSigninFormData] = useState<signinType>({
         email: '',
         password: '',
+        name: ''
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,9 +45,15 @@ const SigninForm: React.FC<{setIsSignup: React.Dispatch<React.SetStateAction<boo
         });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Form submitted:', signinFormData);
+        try {
+          const result = await requestSys.getSignIn(signinFormData);
+          console.log('sign up result:', result);
+        } catch (error) {
+          console.error('sign up failed',error);
+        }
     };
         return (
         <div onSubmit={handleSubmit}>
@@ -62,7 +70,7 @@ const SigninForm: React.FC<{setIsSignup: React.Dispatch<React.SetStateAction<boo
             </InputTextbox>
 
             <div className="flex flex-col items-center w-full">
-              <button type="submit" className={signinButtonStyle}>
+              <button type="submit" className={signinButtonStyle} onClick={()=> requestSys.getSignIn}>
                 Sign in
               </button>
 
