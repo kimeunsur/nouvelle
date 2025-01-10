@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 
-const Main: React.FC = () => {
+const MainPage: React.FC = () => {
   const [showLogin, setShowLogin] = useState(false);
 
   // login-form을 가리키기 위한 ref 생성
@@ -61,4 +61,4 @@ const Main: React.FC = () => {
   );
 };
 
-export default Main;
+export default MainPage;

@@ -1,10 +1,10 @@
 import React from 'react';
-import Main from './pages/main';
+import Pages from './pages/pageManage';
 
 const App: React.FC = () => {
   return (
     <div className="App">
-      <Main/>
+      <Pages/>
     </div>
   );
 }
