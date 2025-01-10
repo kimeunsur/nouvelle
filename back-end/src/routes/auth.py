@@ -1,7 +1,9 @@
+#python -m src.routes.auth   
+
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
 from pydantic import BaseModel, ValidationError
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash
 from typing import Optional
 from src.models.Auth import AuthSchema
 

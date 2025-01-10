@@ -7,4 +7,4 @@ client = MongoClient('mongodb://localhost:27017')
 db = client['nouvelle']
 
 # 'Auth' 컬렉션을 선택
-users_collection = db['Auth']
+auth_collection = db['Auth']
