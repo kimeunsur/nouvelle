@@ -3,7 +3,7 @@ from pymongo import MongoClient
 from pydantic import BaseModel, ValidationError
 from werkzeug.security import generate_password_hash, check_password_hash
 from typing import Optional
-
+from src.models.Auth import AuthSchema
 
 # MongoDB 연결
 client = MongoClient("mongodb+srv://admin:adminadmin77@nouvelle.58oqk.mongodb.net/")
@@ -12,21 +12,6 @@ auth_collection = db['Auth']
 
 app = Flask(__name__)
 
-# Pydantic 모델 정의
-class AuthSchema(BaseModel):
-    email: str
-    password: str
-    name: str
-
-    # MongoDB에 저장할 데이터로 변환
-    def to_mongo_dict(self):
-        # 비밀번호 해싱 처리 (pbkdf2_sha256 알고리즘 사용)
-        hashed_password = generate_password_hash(self.password, method='pbkdf2')
-        return {
-            'email': self.email,
-            'password': hashed_password,
-            'name': self.name,
-        }
 
 
 # 회원가입 API
