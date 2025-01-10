@@ -9,9 +9,19 @@ module.exports = {
         navy: colors.navy,
         yellow: colors.yellow,
         gray: colors.gray,
-      }
+      },
+      fontFamily: {
+        pretendard: ['Pretendard', 'sans-serif'],
+        inter: ['inter', 'sans-serif']
+      },
+      fontSize: {
+        'size.title': '7.5rem',
+        'size.startButton': '2rem',
+      },
+
     },
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar-hide'),
+  ],
 }
-
