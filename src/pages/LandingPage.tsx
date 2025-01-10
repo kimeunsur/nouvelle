@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import InputTextbox from '../components/InputTextbox';
+import { requestSys } from '../systems/Requests';
+import SigninForm from '../components/SigninForm';
+import SignupForm from '../components/SingupForm';
 
 const backgroundStyle = `
   flex flex-col items-center
@@ -44,22 +47,9 @@ const landingStartButtonStyle = `
 const signinSectionStyle = (isScrolledDown: boolean) => {return `
   flex flex-1 flex-col items-center justify-center
   w-[25vw]
-  mt-[25vh]
   transition-opacity duration-1000 ease-in-out
   ${isScrolledDown ? 'opacity-100 visible' : 'opacity-0 invisible'}
 `}
-const inputLabelStyle = `
-  block
-  text-xl text-gray
-`
-const inputLineStyle = `
-  border-b border-gray
-  bg-transparent
-  text-2xl text-gray
-  w-full h-16
-  p-2
-  focus:outline-none
-`
 const signinButtonStyle = `
   bg-yellow
   text-navyDark text-xl rounded-md
@@ -86,25 +76,13 @@ type signinType = {
   password: string,
 }
 
-type signupType = {
-  email: string,
-  password: string,
-  name: string,
-}
-
 const LandingPage: React.FC = () => {
   const [isScrolledDown, setIsScrolledDown] = useState<boolean>(false);
-  const [isSignup, setisSignup] = useState<boolean>(false);
+  const [isSignup, setIsSignup] = useState<boolean>(false);
   const [signinFormData, setSigninFormData] = useState<signinType>({
     email: '',
     password: '',
   });
-  const [signupFormData, setSignupFormData] = useState<signupType>({
-    email: '',
-    password: '',
-    name: '',
-  });
-
 
   useEffect(() => {
     // 화면 상단에 스크롤 위치치
@@ -131,19 +109,6 @@ const LandingPage: React.FC = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setSigninFormData({
-      ...signinFormData,
-      [id]: value,
-    });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form submitted:', signinFormData);
-  };
-
   const handleScroll = () => {
     setIsScrolledDown((window.scrollY > window.innerHeight/2));
   }
@@ -166,58 +131,11 @@ const LandingPage: React.FC = () => {
         </div>
 
         {/* 로그인 창 */}
-        <div className={signinSectionStyle(isScrolledDown)}>
-        {isSignup? (
-        <div ref={signinFormRef} onSubmit={handleSubmit}>
-          <form className="w-full">
-            <InputTextbox label='name' labelType='text' storingData={signinFormData.email} changeHandler={handleChange}>
-              Name
-            </InputTextbox>
-            <div className="m-14"/>
-            <InputTextbox label='email' labelType='text' storingData={signinFormData.email} changeHandler={handleChange}>
-              Email
-            </InputTextbox>
-            <div className="m-14"/>
-            <InputTextbox label='password' labelType='password' storingData={signinFormData.password} changeHandler={handleChange}>
-              PassWord
-            </InputTextbox>
-            <button type="submit"
-                    className={signinButtonStyle}>
-              Sign in
-            </button>
-          </form>
-        </div>
-        ) : (
-        <div ref={signinFormRef}
-            className={signinSectionStyle(isScrolledDown)}
-            onSubmit={handleSubmit}
-        >
-          <form className="w-full">
-            <InputTextbox label='email' labelType='text' storingData={signinFormData.email} changeHandler={handleChange}>
-              Email
-            </InputTextbox>
-            <div className="m-14"/>
-            <InputTextbox label='password' labelType='password' storingData={signinFormData.password} changeHandler={handleChange}>
-              PassWord
-            </InputTextbox>
-            <div className="flex flex-col items-center w-full">
-              <button type="submit"
-                      className={signinButtonStyle}>
-                Sign in
-              </button>
-
-              <div className={signupStyle}
-                   onClick={() => setisSignup(true)}>
-                Register
-              </div>
-              <div className="flex flex-row gap-3">
-                <img src="/ic_kakao.svg" className={externalSigninStyle}/>
-                <img src="/ic_naver.svg" className={externalSigninStyle}/>
-              </div>
-            </div>
-          </form>
-        </div>
-        )}
+        <div ref={signinFormRef} className={signinSectionStyle(isScrolledDown)}>
+          {isSignup
+            ? <SignupForm setIsSignup={setIsSignup}/>
+            : <SigninForm setIsSignup={setIsSignup}/>
+          }
         </div>
       </div>
   );
