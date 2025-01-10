@@ -1,10 +1,15 @@
 from pymongo import MongoClient
+from flask import Flask
+from flask_pymongo import PyMongo
+from src.routes.auth import auth_bp
+from src.routes.naver_auth import naver_bp
 
-# MongoDB에 연결 (MongoDB URI 또는 localhost 등으로 연결)
-client = MongoClient('mongodb://localhost:27017')
+app = Flask(__name__)
 
-# 'nouvelle' 데이터베이스를 선택
-db = client['nouvelle']
+app.config['MONGO_URI'] = "mongodb://localhost:27017"
+mongo = PyMongo(app)
 
-# 'Auth' 컬렉션을 선택
-auth_collection = db['Auth']
+app.register_blueprint(auth_bp, url_prefix='/auth')
+app.register_blueprint(naver_bp, url_prefix='/naver')
+if __name__ == '__main__':
+    app.run(debug=True)
