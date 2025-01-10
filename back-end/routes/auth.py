@@ -52,8 +52,8 @@ def signup():
         return jsonify({"message": "Validation error", "errors": e.errors()}), 400
 
 # 로그인 API
-@app.route('/login', methods=['POST'])
-def login():
+@app.route('/signin', methods=['POST'])
+def signin():
     try:
         # 요청 본문에서 데이터를 받음
         data = request.get_json()
@@ -71,7 +71,7 @@ def login():
         if not check_password_hash(user['password'], password):
             return jsonify({"message": "Invalid password"}), 400
 
-        return jsonify({"message": "Login successful", "user": {"email": user['email'], "name": user['name']}}), 200
+        return jsonify({"message": "Signin successful", "user": {"email": user['email'], "name": user['name']}}), 200
 
     except Exception as e:
         return jsonify({"message": str(e)}), 500

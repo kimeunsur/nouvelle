@@ -9,6 +9,8 @@ module.exports = {
         navy: colors.navy,
         yellow: colors.yellow,
         gray: colors.gray,
+        naverGreen: colors.naverGreen,
+        navyDark: colors.navyDark,
       },
       fontFamily: {
         pretendard: ['Pretendard', 'sans-serif'],
@@ -16,7 +18,7 @@ module.exports = {
       },
       fontSize: {
         'size.title': '7.5rem',
-        'size.startButton': '2rem',
+        'size.startButton': '1.8rem',
       },
 
     },

@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import MainPage from './MainPage';
+import LandingPage from './LandingPage';
 
 
 const Pages = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<MainPage />} />
+        <Route path="/" element={<LandingPage />} />
       </Routes>
     </Router>
   );
