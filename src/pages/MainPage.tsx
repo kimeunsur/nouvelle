@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 
 const MainPage: React.FC = () => {
   const [showLogin, setShowLogin] = useState(false);
-
   // login-form을 가리키기 위한 ref 생성
   const loginFormRef = useRef<HTMLDivElement>(null);
 
@@ -22,7 +21,7 @@ const MainPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-navy bg-opacity-120 min-h-screen flex flex-col items-center justify-center space-y-4">
+    <div className="bg-navy bg-opacity-120 min-h-[200vh] flex flex-col items-center justify-center space-y-4">
       <div className="text-center">
         <h1 className="text-4xl font-thin text-yellow mb-4">Nouvelle Vague</h1>
         <p className="text-lg font-thin text-gray mb-6">우리는 포트폴리오 만들어줭</p>
@@ -37,9 +36,9 @@ const MainPage: React.FC = () => {
       {/* 로그인 창 */}
       <div
         ref={loginFormRef}
-        className="mt-10 p-4 bg-navy rounded-md"
-        style={{ display: showLogin ? 'block' : 'none' }}
-      >
+        className={`mt-10 p-4 bg-navy rounded-md transition-opacity duration-500 ${
+          showLogin ? 'opacity-100 visible' : 'opacity-0 invisible'
+        }`}      >
         <form>
           <div>
             <label htmlFor="username" className="block text-sm font-thin text-gray">Username</label>
