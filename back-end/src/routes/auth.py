@@ -1,6 +1,5 @@
 #python -m src.routes.auth   
-
-from flask import Flask, request, jsonify
+from flask import Blueprint, request, jsonify
 from pymongo import MongoClient
 from pydantic import BaseModel, ValidationError
 from werkzeug.security import check_password_hash
@@ -12,12 +11,11 @@ client = MongoClient("mongodb+srv://admin:adminadmin77@nouvelle.58oqk.mongodb.ne
 db = client['nouvelle']
 auth_collection = db['Auth']
 
-app = Flask(__name__)
-
+auth_bp = Blueprint('auth', __name__)
 
 
 # 회원가입 API
-@app.route('/signup', methods=['POST'])
+@auth_bp.route('/signup', methods=['POST'])
 def signup():
     try:
         # 요청 본문에서 데이터를 받음
@@ -39,7 +37,7 @@ def signup():
         return jsonify({"message": "Validation error", "errors": e.errors()}), 400
 
 # 로그인 API
-@app.route('/signin', methods=['POST'])
+@auth_bp.route('/signin', methods=['POST'])
 def signin():
     try:
         # 요청 본문에서 데이터를 받음
@@ -62,6 +60,3 @@ def signin():
 
     except Exception as e:
         return jsonify({"message": str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(debug=True)
