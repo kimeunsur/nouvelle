@@ -1,5 +1,6 @@
 import { ReactNode, useState } from "react"
 import InputTextbox from "./InputTextbox"
+import { requestSys } from "../systems/Requests"
 
 const signinButtonStyle = `
   bg-yellow
@@ -20,13 +21,15 @@ const signupStyle = `
 type signinType = {
     email: string,
     password: string,
+    name: string
   }
 
 const SignupForm: React.FC<{setIsSignup: React.Dispatch<React.SetStateAction<boolean>>}> = ({setIsSignup}) => {
     
     const [signinFormData, setSigninFormData] = useState<signinType>({
         email: '',
-        password: '',
+        password: '', 
+        name: '',
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,15 +40,21 @@ const SignupForm: React.FC<{setIsSignup: React.Dispatch<React.SetStateAction<boo
         });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Form submitted:', signinFormData);
+        try {
+          const result = await requestSys.getSignUp(signinFormData);
+          console.log('signup result:', result);
+        } catch (error) {
+          console.error('sign up failed',error);
+        }
     };
         return (
         <div onSubmit={handleSubmit}>
           <form className="w-full">
 
-            <InputTextbox label='name' labelType='text' storingData={signinFormData.email} changeHandler={handleChange}>
+            <InputTextbox label='name' labelType='text' storingData={signinFormData.name} changeHandler={handleChange}>
               Name
             </InputTextbox>
 
@@ -62,7 +71,7 @@ const SignupForm: React.FC<{setIsSignup: React.Dispatch<React.SetStateAction<boo
             </InputTextbox>
 
             <div className="flex flex-col items-center w-full">
-              <button type="submit" className={signinButtonStyle}>
+              <button type="submit" className={signinButtonStyle} onClick={()=> requestSys.getSignUp}>
                 Sign in
               </button>
 
