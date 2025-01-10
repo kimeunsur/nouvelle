@@ -5,20 +5,21 @@ from pydantic import BaseModel, ValidationError
 from werkzeug.security import check_password_hash
 from typing import Optional
 from src.models.Auth import AuthSchema
-
+import logging
+from pymongo.errors import PyMongoError
 # MongoDB 연결
 client = MongoClient("mongodb+srv://admin:adminadmin77@nouvelle.58oqk.mongodb.net/")
 db = client['nouvelle']
 auth_collection = db['Auth']
 
-auth_bp = Blueprint('auth', __name__)
+auth_bp = Blueprint('auth', __name__) 
 
 
 # 회원가입 API
 @auth_bp.route('/signup', methods=['POST'])
 def signup():
     try:
-        # 요청 본문에서 데이터를 받음
+        # 요청 본문에서 데이터를 받음 
         data = request.get_json()
 
         # Pydantic 모델 검증
@@ -34,7 +35,18 @@ def signup():
 
     except ValidationError as e:
         # 모델 검증 실패 시 에러 메시지 반환
+        logging.error(f"Validation error: {e.errors()}")
         return jsonify({"message": "Validation error", "errors": e.errors()}), 400
+
+    except PyMongoError as e:
+        # MongoDB 관련 오류 처리
+        logging.error(f"Database error: {str(e)}")
+        return jsonify({"message": "Database error", "error": str(e)}), 500
+
+    except Exception as e:
+        # 일반적인 예외 처리
+        logging.error(f"Unexpected error: {str(e)}")
+        return jsonify({"message": "Internal server error", "error": str(e)}), 500
 
 # 로그인 API
 @auth_bp.route('/signin', methods=['POST'])
@@ -58,5 +70,11 @@ def signin():
 
         return jsonify({"message": "Signin successful", "user": {"email": user['email'], "name": user['name']}}), 200
 
+    except PyMongoError as e:
+        # MongoDB 관련 오류 처리
+        logging.error(f"Database error: {str(e)}")
+        return jsonify({"message": "Database error", "error": str(e)}), 500
+
     except Exception as e:
+        logging.error(f"Unexpected error: {str(e)}")
         return jsonify({"message": str(e)}), 500
