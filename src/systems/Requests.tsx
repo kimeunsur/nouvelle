@@ -1,6 +1,6 @@
 class RequestSys {
     getNaverUser = async () => {
-        const req = await fetch('mongodb://localhost:27017/naver-login');
+        const req = await fetch('http://localhost:5000/naver_auth/naver-login');
     }
 }
 
