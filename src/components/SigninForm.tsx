@@ -1,6 +1,14 @@
-import { ReactNode, useState } from "react"
+import { useState } from "react"
 import InputTextbox from "./InputTextbox"
 import { requestSys } from "../systems/Requests"
+
+const signinFormStyle = (isSignup: boolean) => {return `
+    absolute
+    w-full
+    mt-[10vh]
+    transition-opacity duration-1000 ease-in-out
+    ${!isSignup ? 'opacity-100 visible' : 'opacity-0 invisible'}
+`}
 
 const signinButtonStyle = `
   bg-yellow
@@ -28,7 +36,7 @@ type signinType = {
     password: string,
   }
 
-const SigninForm: React.FC<{setIsSignup: React.Dispatch<React.SetStateAction<boolean>>}> = ({setIsSignup}) => {
+const SigninForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React.SetStateAction<boolean>>}> = ({isSignup, setIsSignup}) => {
     
     const [signinFormData, setSigninFormData] = useState<signinType>({
         email: '',
@@ -48,34 +56,31 @@ const SigninForm: React.FC<{setIsSignup: React.Dispatch<React.SetStateAction<boo
         console.log('Form submitted:', signinFormData);
     };
         return (
-        <div onSubmit={handleSubmit}>
-          <form className="w-full">
-
+        <form className={signinFormStyle(isSignup)} onSubmit={handleSubmit}>
             <InputTextbox label='email' labelType='text' storingData={signinFormData.email} changeHandler={handleChange}>
-              Email
+            Email
             </InputTextbox>
 
             <div className="m-14"/>
 
             <InputTextbox label='password' labelType='password' storingData={signinFormData.password} changeHandler={handleChange}>
-              PassWord
+            PassWord
             </InputTextbox>
 
             <div className="flex flex-col items-center w-full">
-              <button type="submit" className={signinButtonStyle}>
+            <button type="submit" className={signinButtonStyle}>
                 Sign in
-              </button>
+            </button>
 
-              <div className={signupStyle} onClick={() => setIsSignup(true)}>
+            <div className={signupStyle} onClick={() => setIsSignup(true)}>
                 Register
-              </div>
-              <div className="flex flex-row gap-3">
+            </div>
+            <div className="flex flex-row gap-4 mt-7">
                 <img src="/ic_kakao.svg" className={externalSigninStyle}/>
                 <img src="/ic_naver.svg" className={externalSigninStyle} onClick={() => requestSys.getNaverUser()}/>
-              </div>
             </div>
-          </form>
-        </div>
+            </div>
+        </form>
     )
 }
 

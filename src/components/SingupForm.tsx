@@ -1,6 +1,14 @@
 import { ReactNode, useState } from "react"
 import InputTextbox from "./InputTextbox"
 
+const signupFormStyle = (isSignup: boolean) => {return `
+  absolute
+  w-full
+  mt-7
+  transition-opacity duration-1000 ease-in-out
+  ${isSignup ? 'opacity-100 visible' : 'opacity-0 invisible'}
+`}
+
 const signinButtonStyle = `
   bg-yellow
   text-navyDark text-xl rounded-md
@@ -11,53 +19,54 @@ const signinButtonStyle = `
 `
 const signupStyle = `
   text-gray text-xl
-  mt-7 mb-14
+  mt-7
   cursor-pointer
   hover:text-white
   transition-colors
 `
 
-type signinType = {
+type signupType = {
     email: string,
     password: string,
+    name: string,
   }
 
-const SignupForm: React.FC<{setIsSignup: React.Dispatch<React.SetStateAction<boolean>>}> = ({setIsSignup}) => {
+const SignupForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React.SetStateAction<boolean>>}> = ({isSignup, setIsSignup}) => {
     
-    const [signinFormData, setSigninFormData] = useState<signinType>({
+    const [signupFormData, setSignupFormData] = useState<signupType>({
         email: '',
         password: '',
+        name: '',
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
-        setSigninFormData({
-            ...signinFormData,
+        setSignupFormData({
+            ...signupFormData,
             [id]: value,
         });
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Form submitted:', signinFormData);
+        console.log('Form submitted:', signupFormData);
     };
         return (
-        <div onSubmit={handleSubmit}>
-          <form className="w-full">
+          <form className={signupFormStyle(isSignup)} onSubmit={handleSubmit}>
 
-            <InputTextbox label='name' labelType='text' storingData={signinFormData.email} changeHandler={handleChange}>
+            <InputTextbox label='name' labelType='text' storingData={signupFormData.name} changeHandler={handleChange}>
               Name
             </InputTextbox>
 
             <div className="m-14"/>
 
-            <InputTextbox label='email' labelType='text' storingData={signinFormData.email} changeHandler={handleChange}>
+            <InputTextbox label='email' labelType='text' storingData={signupFormData.email} changeHandler={handleChange}>
               Email
             </InputTextbox>
 
             <div className="m-14"/>
 
-            <InputTextbox label='password' labelType='password' storingData={signinFormData.password} changeHandler={handleChange}>
+            <InputTextbox label='password' labelType='password' storingData={signupFormData.password} changeHandler={handleChange}>
               PassWord
             </InputTextbox>
 
@@ -71,7 +80,6 @@ const SignupForm: React.FC<{setIsSignup: React.Dispatch<React.SetStateAction<boo
               </div>
             </div>
           </form>
-        </div>
     )
 }
 
