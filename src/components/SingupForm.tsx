@@ -1,5 +1,6 @@
 import { ReactNode, useState } from "react"
 import InputTextbox from "./InputTextbox"
+import { requestSys } from "../systems/Requests"
 
 const signupFormStyle = (isSignup: boolean) => {return `
   absolute
@@ -9,7 +10,7 @@ const signupFormStyle = (isSignup: boolean) => {return `
   ${isSignup ? 'opacity-100 visible' : 'opacity-0 invisible'}
 `}
 
-const signinButtonStyle = `
+const signupButtonStyle = `
   bg-yellow
   text-navyDark text-xl rounded-md
   w-[20vw]
@@ -47,9 +48,15 @@ const SignupForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React
         });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Form submitted:', signupFormData);
+        try {
+          const result = await requestSys.getSignUp(signupFormData);
+          console.log('sign up result:', result);
+        } catch (error) {
+          console.error('sign up failed',error);
+        }
     };
         return (
           <form className={signupFormStyle(isSignup)} onSubmit={handleSubmit}>
@@ -71,8 +78,8 @@ const SignupForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React
             </InputTextbox>
 
             <div className="flex flex-col items-center w-full">
-              <button type="submit" className={signinButtonStyle}>
-                Sign in
+              <button type="submit" className={signupButtonStyle} onClick={()=> requestSys.getSignUp}>
+                Sign up
               </button>
 
               <div className={signupStyle} onClick={() => setIsSignup(false)}>

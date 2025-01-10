@@ -1,9 +1,16 @@
 class RequestSys {
     // Fixed missing method closure and removed unnecessary semicolon after the method name
     getNaverUser = async () => {
-        const req = await fetch('http://localhost:5000/naver_auth/naver-login');
-        const data = await req.json();
-        console.log(data);
+        try {
+            const req = await fetch('http://localhost:5000/naver_auth/naver-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-url-urlencoded',
+                },
+            });
+        } catch (error) {
+            console.error('message');
+        }
     };
 
     getSignUp = async (data: {email: string, password: string, name: string}) => {
