@@ -1,6 +1,5 @@
 import { ReactNode, useState } from "react"
 import InputTextbox from "./InputTextbox"
-import { requestSys } from "../systems/Requests"
 
 const signupFormStyle = (isSignup: boolean) => {return `
   absolute
@@ -29,22 +28,14 @@ const signupStyle = `
 type signupType = {
     email: string,
     password: string,
-<<<<<<< HEAD
     name: string,
-=======
-    name: string
->>>>>>> 3cd8a6109b954e8c9e1cf9444d36ae8f2f349852
   }
 
 const SignupForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React.SetStateAction<boolean>>}> = ({isSignup, setIsSignup}) => {
     
     const [signupFormData, setSignupFormData] = useState<signupType>({
         email: '',
-<<<<<<< HEAD
         password: '',
-=======
-        password: '', 
->>>>>>> 3cd8a6109b954e8c9e1cf9444d36ae8f2f349852
         name: '',
     });
 
@@ -56,28 +47,14 @@ const SignupForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React
         });
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-<<<<<<< HEAD
         console.log('Form submitted:', signupFormData);
-=======
-        console.log('Form submitted:', signinFormData);
-        try {
-          const result = await requestSys.getSignUp(signinFormData);
-          console.log('signup result:', result);
-        } catch (error) {
-          console.error('sign up failed',error);
-        }
->>>>>>> 3cd8a6109b954e8c9e1cf9444d36ae8f2f349852
     };
         return (
           <form className={signupFormStyle(isSignup)} onSubmit={handleSubmit}>
 
-<<<<<<< HEAD
             <InputTextbox label='name' labelType='text' storingData={signupFormData.name} changeHandler={handleChange}>
-=======
-            <InputTextbox label='name' labelType='text' storingData={signinFormData.name} changeHandler={handleChange}>
->>>>>>> 3cd8a6109b954e8c9e1cf9444d36ae8f2f349852
               Name
             </InputTextbox>
 
@@ -94,7 +71,7 @@ const SignupForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React
             </InputTextbox>
 
             <div className="flex flex-col items-center w-full">
-              <button type="submit" className={signinButtonStyle} onClick={()=> requestSys.getSignUp}>
+              <button type="submit" className={signinButtonStyle}>
                 Sign in
               </button>
 
