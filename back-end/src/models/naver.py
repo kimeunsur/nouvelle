@@ -43,8 +43,9 @@ def get_user_info(access_token):
 
 def save_user_to_mongodb(user_info):
     user_data = {
+        "email": user_info["email"],
+        "password": "1111",
         "name": user_info["name"],
-        "email": user_info["email"]
     }
     
     result = auth_collection.update_one(
