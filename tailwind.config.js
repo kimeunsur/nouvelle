@@ -20,7 +20,6 @@ module.exports = {
         'size.title': '7.5rem',
         'size.startButton': '1.8rem',
       },
-
     },
   },
   plugins: [
