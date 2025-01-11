@@ -26,7 +26,7 @@ const signupStyle = `
   transition-colors
 `
 
-type signupType = {
+export type signupType = {
     email: string,
     password: string,
     name: string,
@@ -44,7 +44,7 @@ const SignupForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React
         const { id, value } = e.target;
         setSignupFormData({
             ...signupFormData,
-            [id]: value,
+            [id.slice(6).toLocaleLowerCase()]: value, // trim 'signup'
         });
     };
 
@@ -61,19 +61,19 @@ const SignupForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React
         return (
           <form className={signupFormStyle(isSignup)} onSubmit={handleSubmit}>
 
-            <InputTextbox label='name' labelType='text' storingData={signupFormData.name} changeHandler={handleChange}>
+            <InputTextbox label='signupName' labelType='text' storingData={signupFormData.name} changeHandler={handleChange}>
               Name
             </InputTextbox>
 
             <div className="m-14"/>
 
-            <InputTextbox label='email' labelType='text' storingData={signupFormData.email} changeHandler={handleChange}>
+            <InputTextbox label='signupEmail' labelType='text' storingData={signupFormData.email} changeHandler={handleChange}>
               Email
             </InputTextbox>
 
             <div className="m-14"/>
 
-            <InputTextbox label='password' labelType='password' storingData={signupFormData.password} changeHandler={handleChange}>
+            <InputTextbox label='signupPassword' labelType='password' storingData={signupFormData.password} changeHandler={handleChange}>
               PassWord
             </InputTextbox>
 

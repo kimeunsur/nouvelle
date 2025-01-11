@@ -10,14 +10,6 @@ const backgroundStyle = `
   overflow-y-scroll
   scrollbar-hide
 `
-const overlayStyle = `
-  flex flex-col items-center
-  w-[100vw] h-[200vh] z-10
-  bg-black
-  overflow-y-scroll
-  scrollbar-hide
-  opacity-20
-`
 const landingSectionStyle = `
   flex flex-col items-center justify-center
   h-[100vh]
@@ -26,7 +18,7 @@ const landingSectionStyle = `
 const landingTitleStyle = `
   text-size.title text-yellow z-20
   font-inter
-  mt-[20vh] mb-10
+  mb-10
 `
 const landingCopyStyle = `
   text-2xl text-gray 

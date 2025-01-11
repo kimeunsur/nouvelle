@@ -31,10 +31,9 @@ const externalSigninStyle = `
   hover:brightness-110 
 `
 
-type signinType = {
+export type signinType = {
     email: string,
     password: string,
-    name: string
   }
 
 const SigninForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React.SetStateAction<boolean>>}> = ({isSignup, setIsSignup}) => {
@@ -42,14 +41,13 @@ const SigninForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React
     const [signinFormData, setSigninFormData] = useState<signinType>({
         email: '',
         password: '',
-        name: ''
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
         setSigninFormData({
             ...signinFormData,
-            [id]: value,
+            [id.slice(6).toLocaleLowerCase()]: value,
         });
     };
 
@@ -65,14 +63,14 @@ const SigninForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React
     };
         return (
         <form className={signinFormStyle(isSignup)} onSubmit={handleSubmit}>
-            <InputTextbox label='email' labelType='text' storingData={signinFormData.email} changeHandler={handleChange}>
-            Email
+            <InputTextbox label='signinEmail' labelType='text' storingData={signinFormData.email} changeHandler={handleChange}>
+              Email
             </InputTextbox>
 
             <div className="m-14"/>
 
-            <InputTextbox label='password' labelType='password' storingData={signinFormData.password} changeHandler={handleChange}>
-            PassWord
+            <InputTextbox label='signinPassword' labelType='password' storingData={signinFormData.password} changeHandler={handleChange}>
+              PassWord
             </InputTextbox>
 
             <div className="flex flex-col items-center w-full">

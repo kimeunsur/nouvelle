@@ -1,3 +1,6 @@
+import { signinType } from "../components/SigninForm";
+import { signupType } from "../components/SingupForm";
+
 class RequestSys {
     // Fixed missing method closure and removed unnecessary semicolon after the method name
     getNaverUser = async () => {
@@ -13,7 +16,7 @@ class RequestSys {
         }
     };
 
-    getSignUp = async (data: {email: string, password: string, name: string}) => {
+    getSignUp = async (data: signupType) => {
         try {
             const response = await fetch('http://127.0.0.1:5000/auth/signup', {
                 method: 'POST',
@@ -25,6 +28,7 @@ class RequestSys {
             const result = await response.json();
             if (response.ok) {
                 console.log('회원가입 성공적~', result);
+                window.location.href = "http://localhost:3000/main";
                 return result;
             } else {
                 console.error('실패', result);
@@ -36,7 +40,7 @@ class RequestSys {
         }
     };
 
-    getSignIn = async (data: {email: string, password: string, name: string}) => {
+    getSignIn = async (data: signinType) => {
         try {
             const response = await fetch('http://127.0.0.1:5000/auth/signin', {
                 method: 'POST',
@@ -48,6 +52,7 @@ class RequestSys {
             const result = await response.json();
             if (response.ok) {
                 console.log('로그인 성공적~', result);
+                window.location.href = "http://localhost:3000/main";
                 return result;
             } else {
                 console.error('실패', result);
