@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import InputTextbox from "./InputTextbox"
 import { requestSys } from "../systems/Requests"
 
@@ -61,6 +61,32 @@ const SigninForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React
           console.error('sign up failed',error);
         }
     };
+
+    const gotoNaver = () => {
+      const redirectUri = "http://localhost:3000/main";
+      const naverLoginUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=lRgFOjhvIeBEWzlRLXBI&redirect_uri=${redirectUri}`;
+      window.location.href = naverLoginUrl;
+    };
+
+    const [code, setCode] = useState<string | null>(null); // code 상태 추가
+
+    useEffect(()=> {
+      const queryParams = new URLSearchParams(window.location.search); //code 추출해서 백엔드로 전송,,
+      const codeFromUrl = queryParams.get('code');
+
+      if (codeFromUrl) {
+        setCode(codeFromUrl);  // 백엔드 API 호출
+      } else {
+          console.error('not founded ');
+      }
+  }, []);
+  useEffect(()=> {
+    if (code) {
+      requestSys.getNaverUser(code);
+      console.log('됨');
+    }
+  }, [code]);
+
         return (
         <form className={signinFormStyle(isSignup)} onSubmit={handleSubmit}>
             <InputTextbox label='signinEmail' labelType='text' storingData={signinFormData.email} changeHandler={handleChange}>
@@ -83,7 +109,7 @@ const SigninForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React
             </div>
             <div className="flex flex-row gap-4 mt-7">
                 <img src="/ic_kakao.svg" className={externalSigninStyle}/>
-                <img src="/ic_naver.svg" className={externalSigninStyle} onClick={() => requestSys.getNaverUser()}/>
+                <img src="/ic_naver.svg" className={externalSigninStyle} onClick={gotoNaver}/>
             </div>
             </div>
         </form>
