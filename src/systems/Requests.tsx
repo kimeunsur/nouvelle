@@ -2,18 +2,25 @@ import { signinType } from "../components/SigninForm";
 import { signupType } from "../components/SingupForm";
 
 class RequestSys {
-    // Fixed missing method closure and removed unnecessary semicolon after the method name
-    getNaverUser = async () => {
+    getNaverUser = async (code: string, state: string) => {
         try {
-            const req = await fetch('http://localhost:5000/naver_auth/naver-login', {
+            const response = await fetch('http://127.0.0.1:5000/naver_auth/naver-login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-url-urlencoded',
+                    'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({ code, state })
             });
-        } catch (error) {
-            console.error('message');
-        }
+
+            const result = await response.json();
+            if (result.message === 'User info saved successfully') {
+                console.log('User info saved successfully');
+              } else {
+                console.error('Failed to save user info');
+              }
+            } catch (error) {
+              console.error('Error during Naver login:', error);
+            }
     };
 
     getKakaoUser = async () => {
@@ -29,6 +36,7 @@ class RequestSys {
                 },
                 body: JSON.stringify(data),
             });
+
             const result = await response.json();
             if (response.ok) {
                 console.log('회원가입 성공적~', result);
@@ -36,16 +44,17 @@ class RequestSys {
                 return result;
             } else {
                 console.error('실패', result);
-                throw new Error(result.message || 'signed up failed');
+                throw new Error(result.message || 'Signup failed');
             }
         } catch (error) {
-            console.error('error during sign up:', error);
+            console.error('Error during sign-up:', error);
             throw error;
         }
     };
 
     getSignIn = async (data: signinType) => {
         try {
+            console.log('Sending sign-in request:', data); // 디버깅 로그
             const response = await fetch('http://127.0.0.1:5000/auth/signin', {
                 method: 'POST',
                 headers: {
@@ -53,6 +62,7 @@ class RequestSys {
                 },
                 body: JSON.stringify(data),
             });
+
             const result = await response.json();
             if (response.ok) {
                 console.log('로그인 성공적~', result);
@@ -60,10 +70,10 @@ class RequestSys {
                 return result;
             } else {
                 console.error('실패', result);
-                throw new Error(result.message || 'login failed');
+                throw new Error(result.message || 'Login failed');
             }
         } catch (error) {
-            console.error('error during login', error);
+            console.error('Error during sign-in:', error);
             throw error;
         }
     };

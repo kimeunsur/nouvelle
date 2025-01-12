@@ -14,6 +14,11 @@ app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb://localhost:27017"
 mongo = PyMongo(app)
 
+@app.after_request
+def apply_csp(response):
+    response.headers["Content-Security-Policy"] = "script-src *.nid.naver.com 'unsafe-inline' 'self';"
+    return response
+
 CORS(app)
 
 app.register_blueprint(auth_bp, url_prefix='/auth')
