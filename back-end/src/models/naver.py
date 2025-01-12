@@ -39,7 +39,9 @@ def get_user_info(access_token):
     if user_info["resultcode"] == "00":
         return user_info["response"]
     else:
-        raise Exception("Failed to get user info: " + user_info.get("message", "Unknown error"))
+        error_message = user_info.get("message", "Unknown error")
+        raise Exception(f"Failed to get user info: {error_message}")
+
 
 def save_user_to_mongodb(user_info):
     user_data = {

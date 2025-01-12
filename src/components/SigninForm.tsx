@@ -61,31 +61,18 @@ const SigninForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React
           console.error('sign up failed',error);
         }
     };
-
+    const generateState = (length = 16) => {
+      return Math.random().toString(36).substring(2, 2 + length);
+    };
+    
     const gotoNaver = () => {
       const redirectUri = "http://localhost:3000/main";
-      const naverLoginUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=lRgFOjhvIeBEWzlRLXBI&redirect_uri=${redirectUri}`;
+      const state = generateState();
+      const naverLoginUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=lRgFOjhvIeBEWzlRLXBI&state=${state}&redirect_uri=${redirectUri}`;      
       window.location.href = naverLoginUrl;
+      console.log("이게 되네");
     };
 
-    const [code, setCode] = useState<string | null>(null); // code 상태 추가
-
-    useEffect(()=> {
-      const queryParams = new URLSearchParams(window.location.search); //code 추출해서 백엔드로 전송,,
-      const codeFromUrl = queryParams.get('code');
-
-      if (codeFromUrl) {
-        setCode(codeFromUrl);  // 백엔드 API 호출
-      } else {
-          console.error('not founded ');
-      }
-  }, []);
-  useEffect(()=> {
-    if (code) {
-      requestSys.getNaverUser(code);
-      console.log('됨');
-    }
-  }, [code]);
 
         return (
         <form className={signinFormStyle(isSignup)} onSubmit={handleSubmit}>
@@ -100,7 +87,7 @@ const SigninForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React
             </InputTextbox>
 
             <div className="flex flex-col items-center w-full">
-              <button type="submit" className={signinButtonStyle} onClick={()=> requestSys.getSignIn}>
+              <button type="submit" className={signinButtonStyle}>
                 Sign in
             </button>
 
