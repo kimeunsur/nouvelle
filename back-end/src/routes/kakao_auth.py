@@ -32,12 +32,12 @@ def login():
     # 카카오 로그인 페이지로 리디렉션
     return redirect(kakao_login_url)
 
-@kakao_bp.route("/login/callback", methods=['get'])
+@kakao_bp.route("/login/callback", methods=['GET'])
 def login_callback():
     code = request.args.get('code')
     try:
         # 2. 토큰 받기 : /oauth/token
-        access_token = access_token = get_access_token(code)
+        access_token = get_access_token(code)
 
         # 3. 사용자 정보 받기 : v2/user/me
         user_info = get_user_info(access_token)

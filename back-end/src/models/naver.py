@@ -7,18 +7,20 @@ db = client["nouvelle"]
 auth_collection = db["Auth"]
 CLIENT_ID = "lRgFOjhvIeBEWzlRLXBI"
 CLIENT_SECRET = "vXgNaAglSB"
+REDIRECT_URI = "http://127.0.0.1:5000/naver_auth/login/callback"
 
 def get_access_token(userCode):
     url = "https://nid.naver.com/oauth2.0/token"
-    data = {
+    headers={'Content-Type': 'application/x-www-form-urlencoded:charset=utf-8'}
+    params = {
         "grant_type": "authorization_code",
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
         "code": userCode,
-        "redirect_uri": "http://localhost:3000/main"
+        "redirect_uri": REDIRECT_URI
     }
     
-    response = requests.post(url, data=data)
+    response = requests.post(url, headers=headers, params=params)
     data = response.json()
     
     if "access_token" in data:
@@ -56,11 +58,3 @@ def save_user_to_mongodb(user_info):
     )
     
     return result
-
-
-#code = "AUTHORIZATION_CODE"
-redirect_uri = "http://localhost:3000/main"
-
-#access_token = "YOUR_ACCESS_TOKEN"  # 네이버 로그인 후 받은 액세스 토큰
-#user_info = get_user_info(access_token)
-#save_user_to_mongodb(user_info)

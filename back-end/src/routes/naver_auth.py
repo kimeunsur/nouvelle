@@ -1,6 +1,7 @@
 import requests
 import random, string
 import flask
+import urllib
 from pymongo import MongoClient
 from flask import Blueprint, request, jsonify, redirect
 from flask_cors import CORS  # CORS를 임포트합니다
@@ -25,27 +26,23 @@ def login():
     my_res.headers["Access-Control-Allow-Origin"] = "*"
     
     naver_login_url = "https://nid.naver.com/oauth2.0/authorize"
-    naver_login_url += f"?response_type=code&client_id={CLIENT_ID}&state=${generate_state()}&redirect_uri=${REDIRECT_URI}"
+    naver_login_url += f"?response_type=code&client_id={CLIENT_ID}&state={generate_state()}&redirect_uri={REDIRECT_URI}"
 
     return redirect(naver_login_url)
 
-@naver_bp.route("/login/callback", methods=["POST"])
+@naver_bp.route("/login/callback", methods=["GET"])
 def login_callback():
-    if not request.json or not request.json.get("code"):
-        return jsonify({"error": "Code is required"}), 400
-    
-    code = request.json.get("code")
-    
+    code = request.args.get('code')
     try:
         # 액세스 토큰을 가져옵니다.
         access_token = get_access_token(code)
-
+        
         # 사용자 정보를 가져옵니다.
         user_info = get_user_info(access_token)
-
+        
         # 사용자 정보를 MongoDB에 저장합니다.
         save_user_to_mongodb(user_info)
-
+        
         email = user_info.get("email")
 
         return redirect(f"http://localhost:3000/main/?email={urllib.parse.quote(email)}")

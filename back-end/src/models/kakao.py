@@ -64,7 +64,3 @@ def save_user_to_mongodb(user_info):
     )
     
     return result
-
-
-#code = "AUTHORIZATION_CODE"
-redirect_uri = "http://localhost:3000/main"
