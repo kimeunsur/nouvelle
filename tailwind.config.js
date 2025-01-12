@@ -18,6 +18,7 @@ module.exports = {
       },
       fontSize: {
         'size.title': '7.5rem',
+        'size.mid': '5rem',
         'size.startButton': '1.8rem',
       },
     },
