@@ -27,14 +27,20 @@ export const IconSearch: React.FC<{className: string}> = ({className}) => {
     )
 }
 
-export const IconLogout: React.FC = () => {
+interface IconLogoutProps {
+    onClick: () => void;
+}
+
+export const IconLogout: React.FC<IconLogoutProps> = ({onClick}) => {
     return (
         <svg id="_레이어_3" data-name="레이어 3" xmlns="http://www.w3.org/2000/svg"
             height="32"
             width="32"
             viewBox="0 0 160 160"
             fill={colors.gray}
-            cursor="pointer">
+            cursor="pointer"
+            onClick={onClick}
+            >
                 <path d="M45.79,3.2c-4.3,0-7.81,3.52-7.81,7.81v31.02c0,3.44,6.18,3.47,6.18,0V12.37c0-1.66,1.34-3,3-3h100.73c1.66,0,3,1.34,3,3v136.98c0,1.66-1.34,3-3,3H47.16c-1.66,0-3-1.34-3-3v-34.83c0-3.42-6.18-3.39-6.18,0v36.19c0,4.3,3.52,7.81,7.81,7.81h103.46c4.3,0,7.81-3.52,7.81-7.81V11.01c0-4.3-3.52-7.81-7.81-7.81H45.79Z"/>
                 <path d="M91.32,81.2H24.08c-1.59,0-2.88-1.34-2.88-3s1.29-3,2.88-3h67.24c1.59,0,2.88,1.34,2.88,3s-1.29,3-2.88,3Z"/>
                 <path d="M1.72,78.22l4.95,4.95.03-.03,16.55,16.55c1.37,1.37,3.58,1.37,4.95,0h0c1.37-1.37,1.37-3.58,0-4.95l-15.84-15.84c-.39-.39-.39-1.03,0-1.42l15.84-15.84c1.37-1.37,1.37-3.58,0-4.95h0c-1.37-1.37-3.58-1.37-4.95,0l-16.55,16.55-.03-.03-4.95,4.95"/>

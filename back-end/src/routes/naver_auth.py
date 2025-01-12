@@ -1,6 +1,7 @@
 import requests
 from pymongo import MongoClient
 from flask import Blueprint, request, jsonify
+from flask_cors import CORS  # CORS를 임포트합니다
 from src.models.naver import get_access_token, get_user_info, save_user_to_mongodb
 #from Keys import Keys 
 Keys = {
@@ -16,6 +17,9 @@ naver_bp = Blueprint('naver_auth', __name__)
 
 @naver_bp.route("/naver-login", methods=["POST"])
 def login():
+    if not request.json or not request.json.get("code"):
+        return jsonify({"error": "Code is required"}), 400
+    
     code = request.json.get("code")
     
     try:

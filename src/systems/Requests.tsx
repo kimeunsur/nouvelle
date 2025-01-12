@@ -2,14 +2,14 @@ import { signinType } from "../components/SigninForm";
 import { signupType } from "../components/SingupForm";
 
 class RequestSys {
-    getNaverUser = async (code: string) => {
+    getNaverUser = async (code: string, state: string) => {
         try {
-            const response = await fetch('http://0.0.1:5000/naver_auth/naver-login', {
+            const response = await fetch('http://127.0.0.1:5000/naver_auth/naver-login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ code })
+                body: JSON.stringify({ code, state })
             });
 
             const result = await response.json();
@@ -50,6 +50,7 @@ class RequestSys {
 
     getSignIn = async (data: signinType) => {
         try {
+            console.log('Sending sign-in request:', data); // 디버깅 로그
             const response = await fetch('http://127.0.0.1:5000/auth/signin', {
                 method: 'POST',
                 headers: {
