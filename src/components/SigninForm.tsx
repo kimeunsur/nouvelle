@@ -96,7 +96,7 @@ const SigninForm: React.FC<{isSignup: boolean, setIsSignup: React.Dispatch<React
             </div>
             <div className="flex flex-row gap-4 mt-7">
                 <img src="/ic_kakao.svg" className={externalSigninStyle} onClick={() => requestSys.getKakaoUser()}/>
-                <img src="/ic_naver.svg" className={externalSigninStyle} onClick={gotoNaver}/>
+                <img src="/ic_naver.svg" className={externalSigninStyle} onClick={() => requestSys.getNaverUser()}/>
             </div>
             </div>
         </form>

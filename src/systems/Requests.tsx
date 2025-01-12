@@ -2,29 +2,12 @@ import { signinType } from "../components/SigninForm";
 import { signupType } from "../components/SingupForm";
 
 class RequestSys {
-    getNaverUser = async (code: string, state: string) => {
-        try {
-            const response = await fetch('http://127.0.0.1:5000/naver_auth/naver-login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ code, state })
-            });
-
-            const result = await response.json();
-            if (result.message === 'User info saved successfully') {
-                console.log('User info saved successfully');
-              } else {
-                console.error('Failed to save user info');
-              }
-            } catch (error) {
-              console.error('Error during Naver login:', error);
-            }
+    getNaverUser = async () => {
+        window.location.href = "http://127.0.0.1:5000/naver_auth/login";
     };
 
     getKakaoUser = async () => {
-        window.location.href = "http://localhost:5000/kakao_auth/kakao-login";
+        window.location.href = "http://127.0.0.1:5000/kakao_auth/login";
     };
 
     getSignUp = async (data: signupType) => {
@@ -77,6 +60,21 @@ class RequestSys {
             throw error;
         }
     };
+
+    getUser = async (email: string) => {
+        try {
+            return await fetch('http://127.0.0.1:5000/auth/user/email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({email}),
+            });
+        } catch (error) {
+            console.error('Error during sign-in:', error);
+            throw error;
+        }
+    }
 }
 
 // Fixed missing closing curly brace for the RequestSys class

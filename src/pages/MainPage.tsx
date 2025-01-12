@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { IconLIke, IconLogout, IconSearch } from "../components/icons";
+import { requestSys } from "../systems/Requests";
 
 const backgroundStyle = `
   flex flex-col items-right justify-between
@@ -42,24 +43,16 @@ const MainPage: React.FC = () => {
 
         // URL에서 'code' 값을 추출
         const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
+        const email = urlParams.get('email');
     
-        if (code) {
+        if (email) {
           // 백엔드에 POST 요청을 보내어 사용자의 메일과 이름 저장
-          saveUserInfo(code);
+          requestSys.getUser(email).then((res) => saveUserInfo(res))
         }
       }, []);
 
-      const saveUserInfo = async (code: string) => {
+      const saveUserInfo = async (response: Response) => {
         try {
-          const response = await fetch('http://127.0.0.1:5000/naver_auth/naver-login', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code }), // 백엔드에 'code' 전달
-          });
-    
           if (response.ok) {
             const userData = await response.json();
             localStorage.setItem('user', JSON.stringify(userData));

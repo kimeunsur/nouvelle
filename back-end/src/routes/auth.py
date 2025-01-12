@@ -78,3 +78,15 @@ def signin():
     except Exception as e:
         logging.error(f"Unexpected error: {str(e)}")
         return jsonify({"message": str(e)}), 500
+
+@auth_bp.route('/user/email', methods=["POST"])
+def getUser():
+    data = request.get_json()
+    email = data.get('email')
+
+    user = auth_collection.find_one({"email": email})
+    if user is None:
+        return jsonify({"message": "User not found"}), 404
+
+    print(user)
+    return jsonify({"message": "Signin successful", "user": {"email": user['email'], "name": user['name']}}), 200

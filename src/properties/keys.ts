@@ -1,4 +1,4 @@
-Keys = {
+export const Keys = {
     "naver": {
         "clientId": "lRgFOjhvIeBEWzlRLXBI",
         "clientSecret": "vXgNaAglSB"

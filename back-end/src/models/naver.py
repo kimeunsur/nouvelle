@@ -20,7 +20,6 @@ def get_access_token(userCode):
     
     response = requests.post(url, data=data)
     data = response.json()
-    #print(f"Response Text: {response.text}")
     
     if "access_token" in data:
         return data["access_token"]
