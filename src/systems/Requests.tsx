@@ -16,6 +16,10 @@ class RequestSys {
         }
     };
 
+    getKakaoUser = async () => {
+        window.location.href = "http://localhost:5000/kakao_auth/kakao-login";
+    };
+
     getSignUp = async (data: signupType) => {
         try {
             const response = await fetch('http://127.0.0.1:5000/auth/signup', {
