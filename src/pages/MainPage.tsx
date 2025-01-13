@@ -1,7 +1,7 @@
 import { Component, useEffect, useState } from "react";
 import { IconLIke, IconLogout, IconSearch } from "../components/icons";
 import { requestSys } from "../systems/Requests";
-import HexaPage from "./HexaPage";
+import HexaPage from "../components/HexaPage";
 
 const backgroundStyle = `
   w-[100vw] h-[100vh]
@@ -34,27 +34,24 @@ const footUIStyle = `
     flex flex-row justify-end
 `
 
-
 const sayingHiStyle = `
+  flex flex-col justify-center
   transition-opacity duration-1000 ease-in-out
-  text-thin
-  text-center
-  h-screen
-  text-size.mid text-gray
+  font-pretendard
+  text-thin text-center text-size.mid text-gray
+  h-[100vh]
 `
-
-const searchIconStyle = `
-  mt-1
-`
-
 const zoomStyle = `
   flex items-center justify-center
   w-[100vw] h-[100vh]
 `
-
 const logoutStyle = `
-footer fixed bottom-0 left-0 p-2
-mb-8 ml-8
+  footer fixed bottom-0 left-0 p-2
+  mb-8 ml-8
+`
+const fadeStyle = (signal: boolean) => `
+  ${signal ? 'opacity-100':'opacity-0'}
+  transition-opacity duration-1000 ease-in-out
 `
 
 const MainPage: React.FC = () => {
@@ -84,17 +81,18 @@ const MainPage: React.FC = () => {
             console.log("받은 사용자 데이터:", userData); // 데이터 구조 확인
         }
 
+        const timeInterval = 1500;
         const timer1 = setTimeout(() => {
           setIsFirstVisible(true);
-        }, 1000);
+        }, timeInterval);
         const timer2 = setTimeout(() => {
           setIsFirstVisible(false);
           setIsSecondVisible(true);
-        }, 2000);
+        }, 2 * timeInterval);
         const timer3 = setTimeout(() => {
           setIsSecondVisible(false);
           setIsThirdVisible(true);
-        }, 3000);
+        }, 3 * timeInterval);
 
         return () => {
           clearTimeout(timer1);
@@ -134,50 +132,40 @@ const MainPage: React.FC = () => {
       }
     return (
         <div className={backgroundStyle}>
-            <div className={headUIStyle}>
-              <IconLIke 
-                  className={`${isIconVisible ? 'opacity-100' : 'opacity-0'} transition-opacity duration-1000 ease-in-out ${likeIconStyle}`}
-                  isOn={isFilterOn} 
-                  setIsOn={() => setIsFilterOn(prev => !prev)}
+            <div className={`${fadeStyle(isIconVisible)} ${headUIStyle}`}>
+              <IconLIke className="mr-4"
+                        isOn={isFilterOn} 
+                        setIsOn={() => setIsFilterOn(prev => !prev)}
               />  
-              <div className={(`${isIconVisible ? 'opacity-100':'opacity-0'}
-              transition-opacity duration-1000 ease-in-out ${searchBoxStyle}`)}
-              >
-                    <input value={searchingQuery}
-                            onChange={(e) => setSearchingQuery(e.target.value)}
-                            className={inputStyle}
-                    />
-                    <IconSearch className={(`${isIconVisible ? 'opacity-100':'opacity-0'}
-                      transition-opacity duration-1000 ease-in-out ${searchIconStyle}`)} 
-                    />
+              <div className={searchBoxStyle}>
+                  <input value={searchingQuery}
+                          onChange={(e) => setSearchingQuery(e.target.value)}
+                          className={inputStyle} />
+                  <IconSearch className="mt-1" />
               </div>
             </div>
-            <div className={`${sayingHiStyle}`}>
-              <div className={`${isFirstVisible ? 'opacity-100 visible' : 'opacity-0 invisible'} transition-opacity duration-1000 ease-in-out`}>
+            <div className={sayingHiStyle}>
+              <div className={fadeStyle(isFirstVisible)}>
                 {isFirstVisible && userName && <div>{userName}님</div>}
               </div>
               
-              <div className={`${isSecondVisible ? 'opacity-100 visible' : 'opacity-0 invisible'} transition-opacity duration-1000 ease-in-out`}>
+              <div className={fadeStyle(isSecondVisible)}>
                 {isSecondVisible && <div>안녕하세요</div>}
               </div>
               
-              <div className={`${isThirdVisible ? 'opacity-100 visible' : 'opacity-0 invisible'} transition-opacity duration-1000 ease-in-out`}>
+              <div className={fadeStyle(isThirdVisible)}>
                 {isThirdVisible && isButtonVisible && (
                   <button 
                     onClick={() => {
                       handleShowIcons();
                       handleClick();
-                }}
+                    }}
                 >눌러서 시작</button>
               )}
               </div>
-              <HexaPage className={`${isIconVisible ? 'opacity-100 visible' : 'opacity-0 invisible'} transition-opacity duration-1000 ease-in-out
-              ${zoomStyle}`}
-            />  
+              {isIconVisible && <HexaPage className={`${fadeStyle(isIconVisible)} ${zoomStyle}`}/>}
             </div>
-            <div className={footUIStyle && (`${isIconVisible ? 'opacity-100':'opacity-0'}
-            transition-opacity duration-1000 ease-in-out ${logoutStyle}`)}
-            >
+            <div className={`${fadeStyle(isIconVisible)} ${footUIStyle} ${logoutStyle}`}>
                 <IconLogout onClick={handleLogout}/>
             </div>
         </div>

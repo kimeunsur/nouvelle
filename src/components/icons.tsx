@@ -53,4 +53,3 @@ export const IconLogout: React.FC<IconLogoutProps> = ({onClick}) => {
         </svg>
     )
 }
-

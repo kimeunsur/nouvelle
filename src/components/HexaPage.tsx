@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
-import { TransformComponent, TransformWrapper, useControls } from "react-zoom-pan-pinch";
+import { useControls } from "react-zoom-pan-pinch";
+import Grid from "./Grid";
 
 const Controls = () => {
     const { zoomIn, zoomOut, resetTransform } = useControls();
@@ -60,7 +61,7 @@ const HexaPage: React.FC<HexaPageProps> = ({className}) => {
         >
             <div
                 ref={contentRef}
-                className="content bg-gray-200 p-4 rounded"
+                className="content relative"
                 style={{
                     transform: `scale(${scale}) translate(${currentPosition.x}px, ${currentPosition.y}px)`,
                     transition: "transform 0.1s ease-in-out",
@@ -68,8 +69,7 @@ const HexaPage: React.FC<HexaPageProps> = ({className}) => {
                 }}
                 onMouseDown={handleMouseDown}
             >
-                <div>안녕</div>
-
+                <Grid isMe={true} />
             </div>
         </div>       
     )
