@@ -31,7 +31,8 @@ def signup():
 
         # MongoDB에 저장
         auth_collection.insert_one(auth_data.to_mongo_dict())
-        return jsonify({"message": "User created successfully"}), 201
+        #return jsonify({"message": "User created successfully"}), 201
+        return jsonify({"message": "User created successful", "user": {"email": auth_data.email, "name": auth_data.name}}), 200
 
     except ValidationError as e:
         # 모델 검증 실패 시 에러 메시지 반환
@@ -67,7 +68,7 @@ def signin():
         # 비밀번호 확인
         if not check_password_hash(user['password'], password):
             return jsonify({"message": "Invalid password"}), 400
-
+        logging.info(data)
         return jsonify({"message": "Signin successful", "user": {"email": user['email'], "name": user['name']}}), 200
 
     except PyMongoError as e:

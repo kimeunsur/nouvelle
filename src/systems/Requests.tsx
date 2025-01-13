@@ -23,7 +23,7 @@ class RequestSys {
             const result = await response.json();
             if (response.ok) {
                 console.log('회원가입 성공적~', result);
-                window.location.href = "http://localhost:3000/main";
+                window.location.href = `http://localhost:3000/main?email=${result.user.email}`;
                 return result;
             } else {
                 console.error('실패', result);
@@ -48,8 +48,8 @@ class RequestSys {
 
             const result = await response.json();
             if (response.ok) {
+                window.location.href = `http://localhost:3000/main?email=${result.user.email}`;
                 console.log('로그인 성공적~', result);
-                window.location.href = "http://localhost:3000/main";
                 return result;
             } else {
                 console.error('실패', result);
