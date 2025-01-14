@@ -4,11 +4,6 @@ const inputLabelStyle = `
   block
   text-xl text-gray
 `
-const inputEditLabelStyle = `
-  block
-  text-xl text-gray
-`
-
 const inputLineStyle = `
   border-b border-gray
   bg-transparent
@@ -17,13 +12,16 @@ const inputLineStyle = `
   p-2
   focus:outline-none
 `
+const inputEditLabelStyle = `
+  block
+  text-xl text-gray
+`
 
 const inputEditLineStyle = `
+  ml-4
   border-b border-gray
   bg-transparent
   text-2xl text-gray
-  w-full h-16
-  p-2
   focus:outline-none
 `
 
