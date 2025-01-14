@@ -1,19 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useControls } from "react-zoom-pan-pinch";
-import { Grid, HexagonLayout, ChildComponent } from "./Grid";
-import { url } from "inspector";
-
-const Controls = () => {
-    const { zoomIn, zoomOut, resetTransform } = useControls();
-
-    return (
-        <div className="tools fixed top-4 left-4 z-10">
-            <button onClick={() => zoomIn()}>+</button>
-            <button onClick={() => zoomOut()}>-</button>
-            <button onClick={() => resetTransform()}>x</button>
-        </div>
-    );
-};
+import { HexagonLayout } from "./Grid";
 
 
 type HexaPageProps = {
@@ -25,6 +11,11 @@ type User = {
     name: string;
 };
 
+const hexaPageStyle = `
+flex flex-col items-ecnter justify-center
+w-full h-full
+overflow-clip
+`
 
 const HexaPage: React.FC<HexaPageProps> = ({className}) => {
     const [scale, setScale] = useState(1);
@@ -109,23 +100,20 @@ const HexaPage: React.FC<HexaPageProps> = ({className}) => {
 
 
     return (
-        <div className={`w-full h-full flex flex-col items-center justify-center overflow-clip ${className}`}
+        <div className={`${hexaPageStyle} ${className}`}
             onWheel={handleWheel}
+            onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
             onMouseDown={handleMouseDown}
         >
-            <div>
-                <ChildComponent userInfo={userInfo} users={users}/>
-            </div>
             <div
                 ref={contentRef}
                 className="content relative"
                 style={{
                     transform: `scale(${scale}) translate(${currentPosition.x}px, ${currentPosition.y}px)`,
                     transition: "transform 0.1s ease-in-out",
-                    cursor: isPanning ? "grabbing" : "grab", // 패닝 중인 경우 커서 변경
                 }}
             >
             <div className="relative w-full h-full flex justify-center items-center">

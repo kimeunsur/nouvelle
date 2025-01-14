@@ -1,4 +1,3 @@
-import { userInfo } from "os";
 import React from "react";
 
 type GridProps = {
@@ -6,17 +5,25 @@ type GridProps = {
     user: {email: string, name: string};
 }
 
+const gridStyle = `
+    user-info
+    absolute top-1/2 left-1/2
+    font-pretandard
+    text-black text-center
+    transform -translate-x-1/2 -translate-y-1/2
+`
+
 export const Grid: React.FC<GridProps> = ({isMe, user}) => {
     return (
-        <div>
+        <div className="realtive">
         <svg id="_레이어_3" data-name="레이어 3" xmlns="http://www.w3.org/2000/svg"
             height="280"
             width="280"
             viewBox="0 0 160 160"
-            className="transition-transform duration-500 ease-in-out hover:scale-105"
+            className="cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105"
             onClick={() => {
                 if (isMe) {
-                    window.location.href = "http://localhost:3000/my"
+                    window.location.href = `http://localhost:3000/my?email=${user.email}`
                 }
                 }}
             >
@@ -24,9 +31,9 @@ export const Grid: React.FC<GridProps> = ({isMe, user}) => {
             <polygon className='fill-navyDark' points="80.2 4.83 14.93 42.51 14.93 117.88 80.2 155.57 145.47 117.88 145.47 42.51 80.2 4.83"/>
             <polygon className={isMe? 'fill-yellow' : 'fill-gray'} points="80.2 7.85 17.54 44.02 17.54 116.37 80.2 152.54 142.85 116.37 142.85 44.02 80.2 7.85"/>
         </svg>
-        <div className="user-info mt-2">
+        <div className={gridStyle}>
                 <div className="font-bold text-sm">{user.name}</div>
-                <div className="text-xs text-gray-500">{user.email}</div>
+                <div className="font-thin text-xs">{user.email}</div>
             </div>
         </div>
     )

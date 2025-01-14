@@ -8,17 +8,13 @@ const backgroundStyle = `
   items-center justify-center
   bg-navyDark
   font-thin
-  overflow-hidden
+  overflow-clip
 `
 const headUIStyle = `
   header fixed top-0 right-0
   flex flex-row
 `
 
-const likeIconStyle = `
-  mr-4
-
-`
 const searchBoxStyle = `
   flex flex-row
   mt-8 mr-9
@@ -40,10 +36,6 @@ const sayingHiStyle = `
   font-pretendard
   text-thin text-center text-size.mid text-gray
   h-[100vh]
-`
-const zoomStyle = `
-  flex items-center justify-center
-  w-[100vw] h-[100vh]
 `
 const logoutStyle = `
   footer fixed bottom-0 left-0 p-2
@@ -68,6 +60,8 @@ const MainPage: React.FC = () => {
         // URL에서 'email' 값을 추출
         const urlParams = new URLSearchParams(window.location.search);
         const email = urlParams.get('email');
+        const isTurningBack = urlParams.get('turnback');
+
         if (email) {
           // 백엔드에 POST 요청을 보내어 사용자의 메일과 이름 저장
           requestSys.getUser(email).then((res) => saveUserInfo(res))
@@ -79,6 +73,9 @@ const MainPage: React.FC = () => {
             console.log('로그인 정보 복원 성공:', userData.user.name);
             console.log("받은 사용자 데이터:", userData); // 데이터 구조 확인
         }
+
+        if(isTurningBack)
+          setIsIconVisible((isTurningBack === '1')? true : false);
 
         const timeInterval = 1500;
         const timer1 = setTimeout(() => {
@@ -145,15 +142,15 @@ const MainPage: React.FC = () => {
             </div>
             <div className={sayingHiStyle}>
               <div className={fadeStyle(isFirstVisible)}>
-                {isFirstVisible && userName && <div>{userName}님</div>}
+                {!isIconVisible && isFirstVisible && userName && <div>{userName}님</div>}
               </div>
               
               <div className={fadeStyle(isSecondVisible)}>
-                {isSecondVisible && <div>안녕하세요</div>}
+                {!isIconVisible && isSecondVisible && <div>안녕하세요</div>}
               </div>
               
-              <div className={`hover:scale-105 ${fadeStyle(isThirdVisible)}`}>
-                {isThirdVisible && isButtonVisible && (
+              <div className={fadeStyle(isThirdVisible)}>
+                {!isIconVisible && isThirdVisible && isButtonVisible && (
                   <button 
                     onClick={() => {
                       handleShowIcons();
@@ -162,7 +159,7 @@ const MainPage: React.FC = () => {
                 >눌러서 시작</button>
               )}
               </div>
-              {isIconVisible && <HexaPage className={`${fadeStyle(isIconVisible)} ${zoomStyle}`}/>}
+              {isIconVisible && <HexaPage className={fadeStyle(isIconVisible)}/>}
             </div>
             <div className={`${fadeStyle(isIconVisible)} ${footUIStyle} ${logoutStyle}`}>
                 <IconLogout onClick={handleLogout}/>
