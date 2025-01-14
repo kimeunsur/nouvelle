@@ -23,7 +23,7 @@ export const Grid: React.FC<GridProps> = ({isMe, user}) => {
             className="cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105"
             onClick={() => {
                 if (isMe) {
-                    window.location.href = "http://localhost:3000/my"
+                    window.location.href = `http://localhost:3000/my?email=${user.email}`
                 }
                 }}
             >

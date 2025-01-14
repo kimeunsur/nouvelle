@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import MyThree from "../three/myThree"
 import { IconHome } from "../components/icons";
 
@@ -17,10 +17,20 @@ transition-transform duration-500 ease-in-out hover:scale-105
 `
 const MyPage: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const urlParams = new URLSearchParams(window.location.search);
+    const email = urlParams.get('email');
+
+    useEffect(() => {
+
+    }, []);
+
+    const goBackHandler = () => {
+        window.window.location.href = `/main?turnback=1&email=${email}`
+    }
     
     return (
         <div className="relative w-[100vw] h-[100vh]">
-            <div className={GoHomeStyle} onClick={() => window.window.location.href = '/main?turnback=1'}>
+            <div className={GoHomeStyle} onClick={() => goBackHandler()}>
                 <IconHome/>
             </div>
             <canvas id="myRoom" ref={canvasRef} className="absolute left-0 top-0"></canvas>
