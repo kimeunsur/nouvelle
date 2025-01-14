@@ -44,13 +44,50 @@ const MyThree = () => {
 
         // Light
         const ambientLight = new THREE.AmbientLight('white', 1);
-        const pointLight = new THREE.PointLight('white', 100, 100);
+        const pointLight = new THREE.PointLight('white', 100, 50);
         pointLight.castShadow = true;
         // shadow resolution
         pointLight.shadow.mapSize.width = 2048;
         pointLight.shadow.mapSize.height = 2048;
         pointLight.position.set(0, 10, 0);
         scene.add(ambientLight, pointLight);
+
+        // Sun
+        const sunLight = new THREE.PointLight(0xffffff, 1, 500);
+        sunLight.position.set(60, 60, 0);
+        scene.add(sunLight);
+
+        // Glow effect
+        const glowMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                viewVector: {value: new THREE.Vector3()},
+                c: {value: 0.5},
+                p: {value: 2.0},
+            },
+            vertexShader: `
+                varying vec3 vNormal;
+                void main() {
+                    vNormal = normalize(normalMatrix * normal);
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform float c;
+                uniform float p;
+                varying vec3 vNormal;
+                void main() {
+                    float intensity = pow(c - dot(vNormal, vec3(0.0, 0.0, 1.0)), p);
+                    gl_FragColor = vec4(1.0, 0.8, 0.4, 1.0) * intensity;
+                }
+            `,
+            side: THREE.BackSide,
+            blending: THREE.AdditiveBlending,
+            transparent: true,
+        });
+
+        const glowMesh = new THREE.Mesh(new THREE.SphereGeometry(6, 32, 32), glowMaterial); // Slightly larger sphere
+        glowMesh.position.copy(sunLight.position);
+        scene.add(glowMesh);
 
         // Cannon(Physics)
         const cannonWorld = new CANNON.World();
@@ -81,19 +118,37 @@ const MyThree = () => {
 
         const cannonObjects: MeshObject[] = [];
 
+        /* Meshes */
+
         const ground = new MeshObject({
             cannonWorld,
             cannonMaterial: defaultCannonMaterial,
             scene,
             name: 'ground',
-            width: 50,
+            width: 100,
             height: 0.1,
-            depth: 50,
-            color: '#092e66',
+            depth: 100,
+            color: '#110c1f',
             y: -0.05,
             offsetY: '0',
         });
         cannonObjects.push(ground);
+
+        const land = new MeshObject({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            scene,
+            loader: gltfLoader,
+            name: 'land',
+            width: 100,
+            height: 0.1,
+            depth: 100,
+            color: '#0c2410',
+            y: -0.05,
+            offsetY: '0',
+            modelSrc: '/land.glb',
+        });
+        cannonObjects.push(land);
 
         const stage = new MeshObject({
             cannonWorld,
@@ -101,9 +156,9 @@ const MyThree = () => {
             scene,
             name: 'stage',
             width: 5,
-            height: 0.1,
+            height: 0.5,
             depth: 5,
-            color: 0xdddddd,
+            color: 0x999999,
             offsetY: '0',
         });
         cannonObjects.push(stage);
@@ -114,7 +169,7 @@ const MyThree = () => {
             scene,
             name: 'floor',
             width: 4.4,
-            height: 0.2,
+            height: 0.6,
             depth: 4.4,
             color: colors.gray,
             offsetY: '0',
@@ -187,7 +242,7 @@ const MyThree = () => {
         const bookShelf = new MeshObject({
             cannonWorld,
             cannonMaterial: defaultCannonMaterial,
-            mass: 100,
+            mass: 50,
             scene,
             loader: gltfLoader,
             name: 'bookShelf',
@@ -195,7 +250,6 @@ const MyThree = () => {
             height: 1.8,
             depth: 1.1,
             x: 0,
-            y: 1,
             z: 1.5,
             rotx: 0,
             roty: Math.PI/2,
@@ -229,6 +283,7 @@ const MyThree = () => {
             mass: 50,
             x: -2,
             z: -2,
+            y: 1,
         });
         
         // Functions

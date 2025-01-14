@@ -29,7 +29,7 @@ export class MeshObject {
         this.height = info.height || 1;
         this.depth = info.depth || 1;
         this.color = info.color || 'white';
-        this.offsetY = info.offsetY || 1;
+        this.offsetY = info.offsetY || 0.4;
         this.x = (info.x || 0) * 1;
         this.y = (info.y || this.height / 2 + this.offsetY) * 1;
         this.z = (info.z || 0) * 1;

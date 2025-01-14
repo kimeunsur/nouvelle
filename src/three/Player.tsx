@@ -30,7 +30,7 @@ export class Player {
         this.height = info.height || 1;
         this.depth = info.depth || 1;
         this.color = info.color || 'white';
-        this.offsetY = info.offsetY || 0.4;
+        this.offsetY = info.offsetY || 0.5;
         this.x = (info.x || 0) * 1;
         this.y = (info.y || 0) * 1 + this.height / 2 + this.offsetY;
         this.z = (info.z || 0) * 1;
@@ -79,8 +79,9 @@ export class Player {
     }
 
     jump() {
+        console.log("!");
         this.isJumping = true;
-        this.cannonBody.velocity.y = 5;
+        this.cannonBody.velocity.y = 3;
     }
 
     setCannonBody() {
