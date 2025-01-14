@@ -73,18 +73,11 @@ def signin():
         if not check_password_hash(user['password'], password):
             return jsonify({"message": "Invalid password"}), 400
         
-        payload = {
-            "user_id": str(user["_id"]),
-            "email": user["email"],
-            "name": user["name"],
-            "exp": datetime.utcnow() + timedelta(hours=1)
-        }
-        token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+
         if isinstance(token, bytes):
             token = token.decode('utf-8')
         logging.info(f"Generated token: {token}")  # 토큰 확인을 위한 로그
-        return jsonify({"message": "Signin successful", "user": {"email": user['email'], "name": user['name']},
-                        "token": token
+        return jsonify({"message": "Signin successful", "user": {"email": user['email'], "name": user['name']}
                         }), 200
 
     except PyMongoError as e:

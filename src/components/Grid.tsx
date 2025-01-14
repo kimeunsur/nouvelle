@@ -61,11 +61,11 @@ export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp> = (
         ? users.filter (
             (user) => user.email !== userInfo.email || user.name !== userInfo.name
         ) : [];
+    
+    console.log('filtered user:',filteredUsers);
 
     const totalUsers = filteredUsers.length;
-    console.log('totaluser:',totalUsers);
     const layers = calculateLayers(totalUsers);
-
     let hexaIndex = 0;
 
     return (
@@ -84,7 +84,7 @@ export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp> = (
                 {Array.from({ length: hexaCount }).map((_, index) => {
                     if (hexaIndex >= totalUsers) //뭔말?
                         return null;
-                    const user = users[hexaIndex];
+                    const user = filteredUsers[hexaIndex];
                     hexaIndex++;
                     return (
                         <div
@@ -109,8 +109,6 @@ export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp> = (
 }
 
 export const ChildComponent: React.FC<ChildComponentProp> = ({userInfo, users}) => {
-    console.log("User Info:", userInfo);
-    console.log("Users:", users);
 
     if (!userInfo) {
         return <p>정보없음</p>
