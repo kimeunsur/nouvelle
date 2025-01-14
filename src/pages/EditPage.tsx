@@ -6,22 +6,34 @@ import { requestSys } from "../systems/Requests";
 export type itemType = {
   color: string;
   stack: any[];
-  external_link: string;
+  external_link1: string;
+  external_link2: string;
 };
 
-const EditPage: React.FC = () => {
+export const EditPage: React.FC = () => {
   const [userEmail, setUserEmail] = useState<string>(" ");
   const [itemFormData, setItemFormData] = useState<itemType>({
     color: "#ff0000",
     stack: [],
-    external_link: "",
+    external_link1: "",
+    external_link2: "",
   });
 
-  const [isPickerVisible, setPickerVisible] = useState<boolean>(false);
+  const photos = [
+    { src: "tex_kotlin.png", label: "kotlin" },
+    { src: "tex_mongo.png", label: "mongo" },
+    { src: "tex_python.png", label: "python" },
+    { src: "tex_react.png", label: "react" },
+    { src: "tex_three.png", label: "three" },
+    { src: "tex_type.png", label: "type" },
+  ];
+  const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
+  const handlePhotoClick = (label: string) => {
+    setSelectedPhotos((prev) =>
+      prev.includes(label) ? prev.filter((item) => item !== label) : [...prev, label]
+    );
+  };
 
-  const togglePicker = () => {
-    setPickerVisible((prev) => !prev);
-  }
   const handleColorChange = useCallback((color: string) => {
     setItemFormData((prevState) => ({
       ...prevState,
@@ -67,15 +79,10 @@ const EditPage: React.FC = () => {
             색상
           </InputEditbox>
 
-          <button type="button" onClick={togglePicker}
-            className="text-xl bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded"
-          >
-            {isPickerVisible ? "▲" : "▼"}
-          </button>
 
-          {isPickerVisible && (
+          {(
             <ChromePicker
-                color={itemFormData.color}
+                color={itemFormData.color} className="mt-4"
                 onChange={(color: ColorResult) => handleColorChange(color.hex)}
             />            
           )}
@@ -86,33 +93,65 @@ const EditPage: React.FC = () => {
           <label htmlFor="selStack" className="mr-12">
             스택
           </label>
-          <input
-            type="text"
-            id="selStack"
-            className="text-black bg-transparent border-b border-gray text-2xl text-gray focus:outline-none"
-            value={itemFormData.stack.join(", ")}
-            onChange={(e) =>
-              setItemFormData({
-                ...itemFormData,
-                stack: e.target.value.split(",").map((item) => item.trim()),
-              })
-            }
-          />
+          <div
+            className="grid grid-cols-3 gap-4 p-7"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(50px, 1fr))",
+              gap: "10px",
+            }}
+          >
+            {photos.map((photo, index) => (
+              <div
+                key={index}
+                className={`relative group cursor-pointer ${
+                  selectedPhotos.includes(photo.label)
+                    ? "opacity-50"
+                    : "opacity-100"
+                } transition-opacity duration-300`}
+                onClick={() => handlePhotoClick(photo.label)}
+              >
+                <img
+                  src={photo.src}
+                  alt={`Gallery ${index + 1}`}
+                  className="w-full h-auto rounded shadow-lg group-hover:opacity-75"
+                />
+                <span className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white text-xs text-center p-1">
+                  {photo.label}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
         <InputEditbox
           label="selUrl"
           labelType="text"
-          storingData={itemFormData.external_link}
+          storingData={itemFormData.external_link1}
           changeHandler={(e) =>
             setItemFormData({
               ...itemFormData,
-              external_link: e.target.value,
+              external_link1: e.target.value,
             })
           }
         >
           외부링크
         </InputEditbox>
+        <div className="mt-8">
+            <InputEditbox
+            label="selUrl"
+            labelType="text"
+            storingData={itemFormData.external_link2}
+            changeHandler={(e) =>
+                setItemFormData({
+                ...itemFormData,
+                external_link2: e.target.value,
+                })
+            }
+            >
+            외부링크
+            </InputEditbox>
+        </div>
       </div>
       <div>
         <button type="submit" className="ml-12 text-2xl hover:text-yellow">
@@ -122,5 +161,3 @@ const EditPage: React.FC = () => {
     </form>
   );
 };
-
-export default EditPage;

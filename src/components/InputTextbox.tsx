@@ -18,7 +18,7 @@ const inputEditLabelStyle = `
 `
 
 const inputEditLineStyle = `
-  ml-4
+  ml-4 
   border-b border-gray
   bg-transparent
   text-2xl text-gray
