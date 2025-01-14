@@ -114,6 +114,7 @@ const HexaPage: React.FC<HexaPageProps> = ({className}) => {
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
+            onMouseDown={handleMouseDown}
         >
             <div>
                 <ChildComponent userInfo={userInfo} users={users}/>
@@ -126,7 +127,6 @@ const HexaPage: React.FC<HexaPageProps> = ({className}) => {
                     transition: "transform 0.1s ease-in-out",
                     cursor: isPanning ? "grabbing" : "grab", // 패닝 중인 경우 커서 변경
                 }}
-                onMouseDown={handleMouseDown}
             >
             <div className="relative w-full h-full flex justify-center items-center">
                 <div>

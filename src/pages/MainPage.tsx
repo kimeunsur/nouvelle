@@ -68,7 +68,6 @@ const MainPage: React.FC = () => {
         // URL에서 'email' 값을 추출
         const urlParams = new URLSearchParams(window.location.search);
         const email = urlParams.get('email');
-        localStorage.getItem('token');
         if (email) {
           // 백엔드에 POST 요청을 보내어 사용자의 메일과 이름 저장
           requestSys.getUser(email).then((res) => saveUserInfo(res))
@@ -167,6 +166,24 @@ const MainPage: React.FC = () => {
             </div>
             <div className={`${fadeStyle(isIconVisible)} ${footUIStyle} ${logoutStyle}`}>
                 <IconLogout onClick={handleLogout}/>
+                <button
+                  onClick={() => {
+                    const savedUser = localStorage.getItem('user');
+                    if (savedUser) {
+                      const userData = JSON.parse(savedUser); // 저장된 사용자 정보 파싱
+                      const email = userData?.user?.email; // 이메일 추출
+                      if (email) {
+                        window.location.href = `http://localhost:3000/myedit?email=${email}`; // 이메일을 URL 끝에 추가
+                      } else {
+                        console.error('사용자 이메일이 없습니다.');
+                      }
+                    } else {
+                      console.error('사용자 정보가 저장되지 않았습니다.');
+                    }
+                  }}
+                >
+                  go to edit
+                </button>
             </div>
         </div>
     );

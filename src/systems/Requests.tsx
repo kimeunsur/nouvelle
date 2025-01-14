@@ -1,6 +1,6 @@
 import { signinType } from "../components/SigninForm";
 import { signupType } from "../components/SingupForm";
-
+import {itemType} from "../pages/EditPage";
 class RequestSys {
     getNaverUser = async () => {
         window.location.href = "http://127.0.0.1:5000/naver_auth/login";
@@ -79,6 +79,33 @@ class RequestSys {
             });
         } catch (error) {
             console.error('Error during sign-in:', error);
+            throw error;
+        }
+    }
+
+    getItem = async (email: string, itemData: itemType) => {
+        try {
+            console.log('sending request:', itemData);
+            const response = await fetch('http://127.0.0.1:5000/item/get_edit_info', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "color": itemData.color,
+                    "stack": itemData.stack,
+                    "external_link": itemData.external_link,
+                    "email": email,     
+                }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                console.log("데이터 보내짐~", data);
+            }
+            console.log("data:",data);
+            return data;
+        } catch (error) {
+            console.error('get item error', error);
             throw error;
         }
     }
