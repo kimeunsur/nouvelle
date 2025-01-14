@@ -79,9 +79,12 @@ export class Player {
     }
 
     jump() {
-        console.log("!");
         this.isJumping = true;
-        this.cannonBody.velocity.y = 3;
+        this.cannonBody.velocity.y = 5;
+
+        setTimeout(() => {
+            this.isJumping = false; // Reset jumping flag after landing
+        }, 1000); // Adjust the timeout based on jump duration
     }
 
     setCannonBody() {

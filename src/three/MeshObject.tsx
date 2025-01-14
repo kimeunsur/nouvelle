@@ -1,6 +1,14 @@
 import { Body, Box, Quaternion, Vec3 } from "cannon-es"
-import { BoxGeometry, Light, Mesh, MeshBasicMaterial, MeshLambertMaterial, Texture } from "three"
-import { GLTF } from "three/examples/jsm/Addons"
+import { BoxGeometry,
+         Light,
+         Mesh,
+         MeshBasicMaterial,
+         MeshLambertMaterial,
+         PointLight,
+         Texture, 
+         TextureLoader,
+         TorusGeometry} from "three"
+import { GLTFLoader } from "three/examples/jsm/Addons"
 
 export class MeshObject {
     name: string
@@ -15,6 +23,9 @@ export class MeshObject {
     rotx: number
     roty: number
     rotz: number
+    scx: number
+    scy: number
+    scz: number
     mass: number
     cannonShape
     cannonWorld
@@ -29,13 +40,16 @@ export class MeshObject {
         this.height = info.height || 1;
         this.depth = info.depth || 1;
         this.color = info.color || 'white';
-        this.offsetY = info.offsetY || 0.4;
+        this.offsetY = info.offsetY || 0.6;
         this.x = (info.x || 0) * 1;
         this.y = (info.y || this.height / 2 + this.offsetY) * 1;
         this.z = (info.z || 0) * 1;
         this.rotx = info.rotx || 0;
         this.roty = info.roty || 0;
         this.rotz = info.rotz || 0;
+        this.scx = info.scx || 1;
+        this.scy = info.scy || 1;
+        this.scz = info.scz || 1;
 
         this.cannonShape = info.cannonShape || new Box(new Vec3(this.width/2, this.height/2, this.depth/2));
 
@@ -51,9 +65,11 @@ export class MeshObject {
                         if(child.isMesh) {
                             child.castShadow = true;
                             if (child.material){
+                                const texture = info.mapSrc? new TextureLoader().load(info.mapSrc) : null;
+
                                 child.material = new MeshLambertMaterial({
-                                    color: this.color,
-                                    map: child.material.map,
+                                    color: texture? undefined : this.color,
+                                    map: texture || child.material.map,
                                 })
                             }
                         }
@@ -62,6 +78,7 @@ export class MeshObject {
                     glb.scene.name = this.name;
                     glb.scene.position.set(this.x, this.y, this.z);
                     glb.scene.rotation.set(this.rotx, this.roty, this.rotz);
+                    glb.scene.scale.set(this.scx, this.scy, this.scz);
                     glb.scene.color = this.color;
                     info.scene.add(this.mesh);
 
@@ -72,12 +89,13 @@ export class MeshObject {
                         new MeshBasicMaterial({
                             color: 'green',
                             transparent: true,
-                            opacity: 0,
+                            opacity: 0.2,
                         })
                     );
                     this.transparentMesh.name = this.name;
                     this.transparentMesh.position.set(this.x, this.y, this.z);
-                    glb.scene.rotation.set(0, Math.PI/2, 0);
+                    this.transparentMesh.rotation.set(this.rotx, this.roty, this.rotz);
+                    this.transparentMesh.scale.set(this.scx, this.scy, this.scz);
                     info.scene.add(this.transparentMesh);
 
                     this.setCannonBody();
@@ -156,5 +174,37 @@ export class MeshObject {
         this.cannonBody.quaternion = combineQuat;
 
         this.cannonWorld.addBody(this.cannonBody)
+    }
+}
+
+export class Lamp extends MeshObject {
+    light: PointLight
+    constructor (info: any) {
+        super(info);
+        this.light = new PointLight('#ea6ab', 0, 50);
+    }
+
+    togglePower() {
+        if (this.light.intensity === 0) {
+            this.light.intensity = 7;
+        } else {
+            this.light.intensity = 0;
+        }
+    }
+}
+
+export class Cushion extends MeshObject {
+    constructor(info: any) {
+        const defaultCushionInfo = {
+            geometry: new TorusGeometry(0.12, 0.05, 5, 10),
+            mass: 10,
+            width: 0.37,
+            height: 0.37,
+            depth: 0.1,
+            modelSrc: '/cushion.glb',
+        };
+        const cushionInfo = { ...defaultCushionInfo, ...info };
+
+        super(cushionInfo);
     }
 }

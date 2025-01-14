@@ -4,7 +4,7 @@ import { colors } from '../properties/colors';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { useEffect } from 'react';
 import { KeyController } from './KeyController';
-import { MeshObject } from './MeshObject';
+import { Cushion, Lamp, MeshObject } from './MeshObject';
 import { Player } from './Player';
 import { OrbitControls } from 'three/examples/jsm/Addons.js';
 
@@ -54,6 +54,8 @@ const MyThree = () => {
 
         // Sun
         const sunLight = new THREE.PointLight(0xffffff, 1, 500);
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
         sunLight.position.set(60, 60, 0);
         scene.add(sunLight);
 
@@ -155,9 +157,9 @@ const MyThree = () => {
             cannonMaterial: defaultCannonMaterial,
             scene,
             name: 'stage',
-            width: 5,
-            height: 0.5,
-            depth: 5,
+            width: 7,
+            height: 0.4,
+            depth: 7,
             color: 0x999999,
             offsetY: '0',
         });
@@ -209,71 +211,138 @@ const MyThree = () => {
         const table = new MeshObject({
             cannonWorld,
             cannonMaterial: defaultCannonMaterial,
-            mass: 20,
             scene,
             loader: gltfLoader,
             name: 'table',
             width: 0.72,
             height: 0.77,
             depth: 1.3,
-            x: 1.5,
-            y: 1,
-            z: 0,
+            x: 1.45,
+            z: 0.4,
+            scx: 1.5,
+            scz: 1.5,
             modelSrc: '/table.glb'
         })
         cannonObjects.push(table);
 
-        const lamp = new MeshObject({
+        const lamp = new Lamp({
             cannonWorld,
             cannonMaterial: defaultCannonMaterial,
-            mass: 20,
             scene,
             loader: gltfLoader,
             name: 'lamp',
             width: 0.5,
             height: 1.8,
             depth: 0.5,
-            x: 1.5,
-            z: 1.5,
-            modelSrc: '/lamp.glb'
+            x: 1.4,
+            z: -1,
+            modelSrc: '/lamp.glb',
+            callback: () => {
+                const lampLight = new THREE.PointLight('#ea6ab', 0, 50);
+                lampLight.castShadow = true;
+                lampLight.shadow.mapSize.width = 2048;
+                lampLight.shadow.mapSize.height = 2048;
+                lampLight.position.y = 0.75;
+                lamp.mesh!.add(lampLight);
+                lamp.light = lampLight;
+            }
         })
         cannonObjects.push(lamp);
 
         const bookShelf = new MeshObject({
             cannonWorld,
             cannonMaterial: defaultCannonMaterial,
-            mass: 50,
             scene,
             loader: gltfLoader,
             name: 'bookShelf',
             width: 0.34,
             height: 1.8,
             depth: 1.1,
-            x: 0,
-            z: 1.5,
+            x: 1.4,
+            z: 1.75,
             rotx: 0,
             roty: Math.PI/2,
             rotz: 0,
+            scx: 1.2,
+            scz: 1.2,
             modelSrc: '/bookShelf.glb'
         })
         cannonObjects.push(bookShelf);
 
-        const cushion = new MeshObject({
+        const cushion1 = new Cushion({
             cannonWorld,
             cannonMaterial: defaultCannonMaterial,
-            mass: 10,
             scene,
             loader: gltfLoader,
-            name: 'cushion',
-            width: 0.37,
-            height: 0.37,
-            depth: 0.1,
-            x: 0.1,
-            y: 1,
-            z: 0.3,
-            modelSrc: '/cushion.glb'
+            name: 'cushion1',
+            x: 1.3,
+            y: 2.0,
+            z: -0.2,
+            rotx: Math.PI/4,
+            roty: Math.PI/4,
+            mapSrc: 'tex_react.png'
         })
-        cannonObjects.push(cushion);
+        cannonObjects.push(cushion1);
+
+        const cushion2 = new Cushion({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            scene,
+            loader: gltfLoader,
+            name: 'cushion2',
+            x: 1.5,
+            y: 1.8,
+            z: 0.0,
+            rotx: Math.PI/3,
+            roty: Math.PI/4,
+            mapSrc: 'tex_type.png'
+        })
+        cannonObjects.push(cushion2);
+
+        const cushion3 = new Cushion({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            scene,
+            loader: gltfLoader,
+            name: 'cushion3',
+            x: 1.2,
+            y: 2.2,
+            z: 0.2,
+            rotx: Math.PI/4,
+            roty: Math.PI/5,
+            mapSrc: 'tex_three.png'
+        })
+        cannonObjects.push(cushion3);
+
+        const cushion4 = new Cushion({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            scene,
+            loader: gltfLoader,
+            name: 'cushion4',
+            x: 1.5,
+            y: 2.2,
+            z: 0.5,
+            rotx: -Math.PI/8,
+            roty: -Math.PI/3,
+            mapSrc: 'tex_python.png'
+        })
+        cannonObjects.push(cushion4);
+
+        const cushion5 = new Cushion({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            scene,
+            loader: gltfLoader,
+            name: 'cushion5',
+            x: 1.4,
+            y: 1.9,
+            z: 0.7,
+            rotx: -Math.PI/6,
+            roty: Math.PI/4,
+            mapSrc: 'tex_mongo.png'
+        })
+        cannonObjects.push(cushion5);
 
         const player = new Player({
             scene,
@@ -281,9 +350,8 @@ const MyThree = () => {
             cannonWorld,
             cannonMaterial: playerCannonMaterial,
             mass: 50,
-            x: -2,
-            z: -2,
-            y: 1,
+            x: -0.5,
+            z: -0.5,
         });
         
         // Functions
@@ -306,7 +374,8 @@ const MyThree = () => {
             if (keyController.keys['KeyD'] || keyController.keys["ArrowRight"]){
                 player.walk(0.05, 'right', scene);
             }
-            if (keyController.keys['Space'] || !player.isJumping){
+            if (keyController.keys['Space'] && !player.isJumping){
+                console.log("!")
                 player.jump();
             }
         }
@@ -360,9 +429,10 @@ const MyThree = () => {
             raycaster.setFromCamera(mouse, camera);
             // children items that are hit by the ray
             const intersects = raycaster.intersectObjects(scene.children)
+            console.log(intersects[0].object.name);
             for (const item of intersects) {
-                console.log(item.object.name);
                 if (item.object.name === 'lamp') {
+                    lamp.togglePower();
                     break;
                 }
             }
@@ -397,6 +467,11 @@ const MyThree = () => {
                 player.x = player.cannonBody.position.x;
                 player.y = player.cannonBody.position.y;
                 player.z = player.cannonBody.position.z;
+
+                if (player.cannonBody.velocity.y === 0) {
+                    player.isJumping = false; // Reset jumping state
+                }
+            
                 move()
             }
 
@@ -410,26 +485,37 @@ const MyThree = () => {
         draw();
         
         // Events
+        const raycastIntersectHandler = () => {
+            mouse.x = 0;
+            mouse.y = 0;
+            if(document.body.dataset.mode === 'game'){
+                checkIntersects();
+            }
+        }
+
+        const pointerlockChangeHandler = () => {
+            if(document.pointerLockElement === canvas){
+                setMode('game') // <body data-mode="game">
+            } else {
+                setMode('website') // <body data-mode="website">
+            }
+        }
+
         window.addEventListener('resize', setLayout);
         
         window.addEventListener('click', () => {
             canvas.requestPointerLock(); // hiding pointer curosr
         });
         
-        canvas.addEventListener('click', event => {
-            mouse.x = 0;
-            mouse.y = 0;
-            if(document.body.dataset.mode === 'game'){
-                checkIntersects();
-            }
-        })
+        canvas.addEventListener('click', raycastIntersectHandler);
         
-        document.addEventListener('pointerlockchange', () => {
-            if(document.pointerLockElement === canvas){
-                setMode('game') // <body data-mode="game">
-            } else {
-                setMode('website') // <body data-mode="website">
-            }
+        document.addEventListener('pointerlockchange', pointerlockChangeHandler)
+
+        return (() => {
+            window.removeEventListener('resize', setLayout);
+            window.removeEventListener('click', () => canvas.requestPointerLock());
+            canvas.removeEventListener('click', raycastIntersectHandler);
+            document.removeEventListener('pointerlockchange', pointerlockChangeHandler);
         })
     }, []);
 
