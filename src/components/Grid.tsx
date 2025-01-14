@@ -5,6 +5,10 @@ type GridProps = {
     user: {email: string, name: string};
 }
 
+interface GetDataProps {
+    userData: { email: string; name: string }[] | null; // 전달받을 데이터의 타입 정의
+}
+
 const gridStyle = `
     user-info
     absolute top-1/2 left-1/2
@@ -14,6 +18,8 @@ const gridStyle = `
 `
 
 export const Grid: React.FC<GridProps> = ({isMe, user}) => {
+
+    
     return (
         <div className="realtive">
         <svg id="_레이어_3" data-name="레이어 3" xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +59,7 @@ type HexagonLayoutProp = {
     users: User[];
 };
 
-export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp> = ({userInfo, users}) => {
+export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp  & GetDataProps> = ({userInfo, users, userData}) => {
     const calculateLayers = (totalUsers: number): number => {
         let layer = 0;
         let totalHexa = 1;
@@ -69,7 +75,7 @@ export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp> = (
             (user) => user.email !== userInfo.email || user.name !== userInfo.name
         ) : [];
     
-    console.log('filtered user:',filteredUsers);
+    //console.log('filtered user:',filteredUsers);
 
     const totalUsers = filteredUsers.length;
     const layers = calculateLayers(totalUsers);
@@ -77,42 +83,66 @@ export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp> = (
 
     return (
         <div className=" ">
-            <div className="absolute flex justify-center items-center">
-                {userInfo? (
-                    <Grid isMe={true} user={{email: userInfo.email, name: userInfo.name}}/>
-                ) : <p>정보없음..</p>
-            }
+          <div className="absolute flex justify-center items-center">
+            {userInfo ? (
+              <Grid isMe={true} user={{ email: userInfo.email, name: userInfo.name }} />
+            ) : (
+              <p>정보없음..</p>
+            )}
+          </div>
+          {userData && userData.length > 0 ? (
+            // userData가 null이 아니고 데이터가 있을 경우
+            <div className="relative">
+              {userData.map((user, index) => (
+                <div
+                  key={index}
+                  className="absolute top-1/2 left-1/2 transform"
+                  style={{
+                    transform: `
+                      rotate(${(360 / userData.length) * index}deg)
+                      translate(280px)
+                      rotate(-${(360 / userData.length) * index}deg)
+                    `,
+                  }}
+                >
+                  <Grid isMe={false} user={user} />
+                </div>
+              ))}
             </div>
-        {Array.from({length: layers}).map((_, layer) => {
-            const hexaCount = 6 * (layer +1);
-            const radius = 280 + layer*160;
-            return (
-              <div key={layer} className="relative">
-                {Array.from({ length: hexaCount }).map((_, index) => {
-                    if (hexaIndex >= totalUsers) //뭔말?
-                        return null;
+          ) : (
+            // userData가 null이거나 빈 배열일 경우 기존 로직 실행
+            Array.from({ length: layers }).map((_, layer) => {
+              const hexaCount = 6 * (layer + 1);
+              const radius = 280 + layer * 280;
+              return (
+                <div key={layer} className="absolute">
+                  {Array.from({ length: hexaCount }).map((_, index) => {
+                    if (hexaIndex >= totalUsers) return null;
                     const user = filteredUsers[hexaIndex];
                     hexaIndex++;
+      
                     return (
-                        <div
-                            key={index}
-                            className="absolute top-1/2 left-1/2 transform"
-                            style={{
-                                transform: `
-                                    rotate(${(360 / hexaCount) * index}deg)
-                                    translate(${radius}px)
-                                    rotate(-${(360 / hexaCount) * index}deg)                                `,
-                            }}
-                        >
-                            <Grid isMe={false} user={user}/>
-                        </div>
+                      <div
+                        key={index}
+                        className="absolute top-1/2 left-1/2 transform"
+                        style={{
+                          transform: `
+                            rotate(${(360 / hexaCount) * index}deg)
+                            translate(${radius}px)
+                            rotate(-${(360 / hexaCount) * index}deg)
+                          `,
+                        }}
+                      >
+                        <Grid isMe={false} user={user} />
+                      </div>
                     );
-                })}
-              </div>
-            );
-        })}
-    </div>
-    )
+                  })}
+                </div>
+              );
+            })
+          )}
+        </div>
+      );
 }
 
 export const ChildComponent: React.FC<ChildComponentProp> = ({userInfo, users}) => {

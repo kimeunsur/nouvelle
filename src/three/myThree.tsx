@@ -242,8 +242,11 @@ const MyThree = () => {
                 lampLight.castShadow = true;
                 lampLight.shadow.mapSize.width = 2048;
                 lampLight.shadow.mapSize.height = 2048;
+                if(lamp.mesh){
                 lampLight.position.y = 0.75;
-                lamp.mesh!.add(lampLight);
+                    lamp.mesh.add(lampLight);
+                    console.log(lampLight.position);
+                }
                 lamp.light = lampLight;
             }
         })
@@ -266,6 +269,23 @@ const MyThree = () => {
             scx: 1.2,
             scz: 1.2,
             modelSrc: '/bookShelf.glb'
+        })
+        cannonObjects.push(bookShelf);
+
+        const board = new MeshObject({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            scene,
+            loader: gltfLoader,
+            name: 'board',
+            width: 2,
+            height: 1.2,
+            depth: 0.2,
+            x: -0.7,
+            y: 1.8,
+            z: 2,
+            roty: Math.PI,
+            modelSrc: '/board.glb'
         })
         cannonObjects.push(bookShelf);
 
@@ -353,6 +373,53 @@ const MyThree = () => {
             x: -0.5,
             z: -0.5,
         });
+
+        /* Texts */
+
+        const refSpriteMaterial = new THREE.SpriteMaterial({
+            map: new THREE.CanvasTexture(createTitleTextCanvas('둘러보기', 24)),
+        });
+        const refsprite = new THREE.Sprite(refSpriteMaterial);
+        refsprite.scale.set(1, 0.5, 0.5); // Adjust size
+        refsprite.position.set(board.x, board.y + 0.5, board.z-0.5); // Position in 3D space
+        scene.add(refsprite);
+
+        const stackSpriteMaterial = new THREE.SpriteMaterial({
+            map: new THREE.CanvasTexture(createTitleTextCanvas('나의 기술스택', 24)),
+        });
+        const stacksprite = new THREE.Sprite(stackSpriteMaterial);
+        stacksprite.scale.set(1, 0.5, 0.5); // Adjust size
+        stacksprite.position.set(table.x, table.y + 1.5, table.z); // Position in 3D space
+        scene.add(stacksprite);
+        
+        // Helper to create text canvas
+        function createTitleTextCanvas(text: string, size: number) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 300;
+            canvas.height = 128;
+            ctx!.fillStyle = 'white';
+            ctx!.font = `${size}px Pretendard`;
+            ctx!.textAlign = 'center';
+            ctx!.textBaseline = 'middle';
+            ctx!.fillText(text, canvas.width / 2, canvas.height / 2);
+            return canvas;
+        }
+
+        const caption1 = createCaption("stack");
+        scene.add(caption1);
+
+        function createCaption(text: string) {
+            const captionSpriteMaterial = new THREE.SpriteMaterial({
+                map: new THREE.CanvasTexture(createTitleTextCanvas('스택', 16)),
+                transparent: true,
+            });
+            const captionsprite = new THREE.Sprite(captionSpriteMaterial);
+            captionsprite.scale.set(1, 0.5, 0.5); // Adjust size
+            captionsprite.visible = false;
+
+            return captionsprite;
+        }
         
         // Functions
         function setLayout() {
@@ -378,13 +445,6 @@ const MyThree = () => {
                 console.log("!")
                 player.jump();
             }
-        }
-        let movementX = 0;
-        let movementY = 0;
-        let delta: number;
-        function updateMovementValue(event: any) {
-            movementX = event.movementX * delta;
-            movementY = event.movementY * delta; 
         }
         
         const euler = new THREE.Euler(0, 0, 0, 'YXZ');
@@ -425,11 +485,23 @@ const MyThree = () => {
         // Raycasting
         const mouse = new THREE.Vector2();
         const raycaster = new THREE.Raycaster();
+        let hoveredObject: THREE.Object3D | null;
         function checkIntersects() {
             raycaster.setFromCamera(mouse, camera);
             // children items that are hit by the ray
             const intersects = raycaster.intersectObjects(scene.children)
+            if (intersects.length > 0) {
+                if (hoveredObject !== intersects[0].object) {
             console.log(intersects[0].object.name);
+                    hoveredObject = intersects[0].object;
+                    caption1.position.copy(hoveredObject.position).add(new THREE.Vector3(0, 1, 0));
+
+                    caption1.visible = true;
+                }
+            } else {
+                hoveredObject = null;
+                caption1.visible = false;
+            }
             for (const item of intersects) {
                 if (item.object.name === 'lamp') {
                     lamp.togglePower();
@@ -439,6 +511,9 @@ const MyThree = () => {
         }
         
         // Draw
+        let movementX = 0;
+        let movementY = 0;
+        let delta: number;
         const clock = new THREE.Clock(); // fot delta = time Wper frame (resolving fps difference)
         function draw() {
             delta = clock.getDelta();
@@ -485,6 +560,16 @@ const MyThree = () => {
         draw();
         
         // Events
+        function updateMovementValue(event: MouseEvent) {
+            movementX = event.movementX * delta /2;
+            movementY = event.movementY * delta /2;
+
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            checkIntersects();
+        }
+
         const raycastIntersectHandler = () => {
             mouse.x = 0;
             mouse.y = 0;
@@ -508,6 +593,7 @@ const MyThree = () => {
         });
         
         canvas.addEventListener('click', raycastIntersectHandler);
+        canvas.addEventListener('mousemove', raycastIntersectHandler);
         
         document.addEventListener('pointerlockchange', pointerlockChangeHandler)
 

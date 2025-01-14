@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import InputTextbox from "./InputTextbox"
+import { InputTextbox } from "./InputTextbox"
 import { requestSys } from "../systems/Requests"
 
 const signinFormStyle = (isSignup: boolean) => {return `

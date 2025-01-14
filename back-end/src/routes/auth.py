@@ -1,4 +1,3 @@
-#python -m src.routes.auth   
 from flask import Blueprint, request, jsonify
 from pymongo import MongoClient
 from pydantic import BaseModel, ValidationError
