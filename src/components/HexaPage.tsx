@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { createContext, useContext, Component, useState, useRef, useEffect } from "react";
 import { HexagonLayout } from "./Grid";
 
 
@@ -12,12 +12,16 @@ type User = {
 };
 
 const hexaPageStyle = `
-flex flex-col items-ecnter justify-center
+flex flex-col items-center justify-center
 w-full h-full
 overflow-clip
 `
 
-const HexaPage: React.FC<HexaPageProps> = ({className}) => {
+interface GetDataProps {
+    userData: { email: string; name: string }[] | null; // 전달받을 데이터의 타입 정의
+}
+
+export const HexaPage: React.FC<HexaPageProps & GetDataProps> = ({className, userData}) => {
     const [scale, setScale] = useState(1);
     const [isPanning, setIsPanning] = useState(false);
     const [startPosition, setStartPosition] = useState({x:0, y:0});
@@ -32,6 +36,7 @@ const HexaPage: React.FC<HexaPageProps> = ({className}) => {
         setScale((prevScale) => Math.min(Math.max(prevScale + delta, 0.5), 3));
     };
 
+    
     const handleMouseDown = (event: React.MouseEvent) => {
         setIsPanning(true);
         setStartPosition({x: event.clientX, y: event.clientY});
@@ -102,7 +107,6 @@ const HexaPage: React.FC<HexaPageProps> = ({className}) => {
     return (
         <div className={`${hexaPageStyle} ${className}`}
             onWheel={handleWheel}
-            onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
@@ -118,13 +122,12 @@ const HexaPage: React.FC<HexaPageProps> = ({className}) => {
             >
             <div className="relative w-full h-full flex justify-center items-center">
                 <div>
-                    <HexagonLayout userInfo={userInfo} users={users}/>
+                    <HexagonLayout userInfo={userInfo} users={users} userData={userData}/>
                 </div>
             </div>
-
+                <div >
+                </div>
             </div>
         </div>       
     )
 }
-
-export default HexaPage;
