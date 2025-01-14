@@ -68,7 +68,7 @@ const MainPage: React.FC = () => {
         // URL에서 'email' 값을 추출
         const urlParams = new URLSearchParams(window.location.search);
         const email = urlParams.get('email');
-
+        localStorage.getItem('token');
         if (email) {
           // 백엔드에 POST 요청을 보내어 사용자의 메일과 이름 저장
           requestSys.getUser(email).then((res) => saveUserInfo(res))
@@ -153,7 +153,7 @@ const MainPage: React.FC = () => {
                 {isSecondVisible && <div>안녕하세요</div>}
               </div>
               
-              <div className={fadeStyle(isThirdVisible)}>
+              <div className={`hover:scale-105 ${fadeStyle(isThirdVisible)}`}>
                 {isThirdVisible && isButtonVisible && (
                   <button 
                     onClick={() => {

@@ -7,6 +7,9 @@ from typing import Optional
 from src.models.Auth import AuthSchema
 import logging
 from pymongo.errors import PyMongoError
+import jwt
+from datetime import datetime, timedelta
+
 # MongoDB 연결
 client = MongoClient("mongodb+srv://admin:adminadmin77@nouvelle.58oqk.mongodb.net/")
 db = client['nouvelle']
@@ -14,6 +17,7 @@ auth_collection = db['Auth']
 
 auth_bp = Blueprint('auth', __name__) 
 
+SECRET_KEY="1234"
 
 # 회원가입 API
 @auth_bp.route('/signup', methods=['POST'])
@@ -33,7 +37,7 @@ def signup():
         auth_collection.insert_one(auth_data.to_mongo_dict())
         #return jsonify({"message": "User created successfully"}), 201
         return jsonify({"message": "User created successful", "user": {"email": auth_data.email, "name": auth_data.name}}), 200
-
+        
     except ValidationError as e:
         # 모델 검증 실패 시 에러 메시지 반환
         logging.error(f"Validation error: {e.errors()}")
@@ -68,8 +72,20 @@ def signin():
         # 비밀번호 확인
         if not check_password_hash(user['password'], password):
             return jsonify({"message": "Invalid password"}), 400
-        logging.info(data)
-        return jsonify({"message": "Signin successful", "user": {"email": user['email'], "name": user['name']}}), 200
+        
+        payload = {
+            "user_id": str(user["_id"]),
+            "email": user["email"],
+            "name": user["name"],
+            "exp": datetime.utcnow() + timedelta(hours=1)
+        }
+        token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+        if isinstance(token, bytes):
+            token = token.decode('utf-8')
+        logging.info(f"Generated token: {token}")  # 토큰 확인을 위한 로그
+        return jsonify({"message": "Signin successful", "user": {"email": user['email'], "name": user['name']},
+                        "token": token
+                        }), 200
 
     except PyMongoError as e:
         # MongoDB 관련 오류 처리

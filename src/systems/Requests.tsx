@@ -50,6 +50,13 @@ class RequestSys {
             if (response.ok) {
                 window.location.href = `http://localhost:3000/main?email=${result.user.email}`;
                 console.log('로그인 성공적~', result);
+
+                if (result.token) {
+                    localStorage.setItem('token', result.token);
+                } else {
+                    console.error("Token not received");
+                    throw new Error("Token missing in response");
+                }
                 return result;
             } else {
                 console.error('실패', result);
