@@ -106,6 +106,7 @@ const HexaPage: React.FC<HexaPageProps> = ({className}) => {
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
+            onMouseDown={handleMouseDown}
         >
             <div
                 ref={contentRef}

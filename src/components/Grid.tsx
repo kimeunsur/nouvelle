@@ -83,9 +83,9 @@ export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp> = (
                 ) : <p>정보없음..</p>
             }
             </div>
-        {Array.from({length: layers}).map((_, layer) => {
-            const hexaCount = 6 * (layer +1);
-            const radius = 280 + layer*160;
+            {Array.from({length: layers}).map((_, layer) => {
+            const hexaCount = 6 * (layer + 1);
+            const radius = 280 + layer*280;
             return (
               <div key={layer} className="relative">
                 {Array.from({ length: hexaCount }).map((_, index) => {
@@ -93,6 +93,7 @@ export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp> = (
                         return null;
                     const user = filteredUsers[hexaIndex];
                     hexaIndex++;
+                    
                     return (
                         <div
                             key={index}
