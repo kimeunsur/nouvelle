@@ -1,3 +1,6 @@
+import { userInfo } from "os";
+import React from "react";
+
 type GridProps = {
     isMe: boolean;
     user: {email: string, name: string};
@@ -34,12 +37,16 @@ type User = {
     email: string;
     name: string;
 };
+type ChildComponentProp = {
+    userInfo: User | null;
+    users: User[];
+}
 
 type HexagonLayoutProp = {
     users: User[];
 };
 
-export const HexagonLayout: React.FC<HexagonLayoutProp> = ({users}) => {
+export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp> = ({userInfo, users}) => {
     const calculateLayers = (totalUsers: number): number => {
         let layer = 0;
         let totalHexa = 1;
@@ -50,18 +57,30 @@ export const HexagonLayout: React.FC<HexagonLayoutProp> = ({users}) => {
         return layer;
     };
 
-    const totalUsers = users.length;
+    const filteredUsers = users && userInfo
+        ? users.filter (
+            (user) => user.email !== userInfo.email || user.name !== userInfo.name
+        ) : [];
+
+    const totalUsers = filteredUsers.length;
+    console.log('totaluser:',totalUsers);
     const layers = calculateLayers(totalUsers);
 
     let hexaIndex = 0;
 
     return (
-        <div className="absolute w-full h-full flex justify-center items-center">
+        <div className=" ">
+            <div className="absolute flex justify-center items-center">
+                {userInfo? (
+                    <Grid isMe={true} user={{email: userInfo.email, name: userInfo.name}}/>
+                ) : <p>정보없음..</p>
+            }
+            </div>
         {Array.from({length: layers}).map((_, layer) => {
             const hexaCount = 6 * (layer +1);
-            const radius = 280 + layer*280;
+            const radius = 280 + layer*160;
             return (
-              <div key={layer} className="relative w-full h-full">
+              <div key={layer} className="relative">
                 {Array.from({ length: hexaCount }).map((_, index) => {
                     if (hexaIndex >= totalUsers) //뭔말?
                         return null;
@@ -86,5 +105,17 @@ export const HexagonLayout: React.FC<HexagonLayoutProp> = ({users}) => {
             );
         })}
     </div>
+    )
+}
+
+export const ChildComponent: React.FC<ChildComponentProp> = ({userInfo, users}) => {
+    console.log("User Info:", userInfo);
+    console.log("Users:", users);
+
+    if (!userInfo) {
+        return <p>정보없음</p>
+    }
+    return (
+        <div></div>
     )
 }

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useControls } from "react-zoom-pan-pinch";
-import { Grid, HexagonLayout } from "./Grid";
+import { Grid, HexagonLayout, ChildComponent } from "./Grid";
 import { url } from "inspector";
 
 const Controls = () => {
@@ -115,6 +115,9 @@ const HexaPage: React.FC<HexaPageProps> = ({className}) => {
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
         >
+            <div>
+                <ChildComponent userInfo={userInfo} users={users}/>
+            </div>
             <div
                 ref={contentRef}
                 className="content relative"
@@ -126,11 +129,8 @@ const HexaPage: React.FC<HexaPageProps> = ({className}) => {
                 onMouseDown={handleMouseDown}
             >
             <div className="relative w-full h-full flex justify-center items-center">
-                <div className="absolute">
-                    <Grid isMe={isMe || false} user={{email: userInfo.email, name: userInfo.name}}/>
-                </div>
                 <div>
-                    <HexagonLayout users={users}/>
+                    <HexagonLayout userInfo={userInfo} users={users}/>
                 </div>
             </div>
 
