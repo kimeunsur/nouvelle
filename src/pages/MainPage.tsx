@@ -68,6 +68,7 @@ const MainPage: React.FC = () => {
         // URL에서 'email' 값을 추출
         const urlParams = new URLSearchParams(window.location.search);
         const email = urlParams.get('email');
+        const isTurningBack = urlParams.get('turnback');
 
         if (email) {
           // 백엔드에 POST 요청을 보내어 사용자의 메일과 이름 저장
@@ -80,6 +81,9 @@ const MainPage: React.FC = () => {
             console.log('로그인 정보 복원 성공:', userData.user.name);
             console.log("받은 사용자 데이터:", userData); // 데이터 구조 확인
         }
+
+        if(isTurningBack)
+          setIsIconVisible((isTurningBack === '1')? true : false);
 
         const timeInterval = 1500;
         const timer1 = setTimeout(() => {
@@ -146,15 +150,15 @@ const MainPage: React.FC = () => {
             </div>
             <div className={sayingHiStyle}>
               <div className={fadeStyle(isFirstVisible)}>
-                {isFirstVisible && userName && <div>{userName}님</div>}
+                {!isIconVisible && isFirstVisible && userName && <div>{userName}님</div>}
               </div>
               
               <div className={fadeStyle(isSecondVisible)}>
-                {isSecondVisible && <div>안녕하세요</div>}
+                {!isIconVisible && isSecondVisible && <div>안녕하세요</div>}
               </div>
               
               <div className={fadeStyle(isThirdVisible)}>
-                {isThirdVisible && isButtonVisible && (
+                {!isIconVisible && isThirdVisible && isButtonVisible && (
                   <button 
                     onClick={() => {
                       handleShowIcons();
