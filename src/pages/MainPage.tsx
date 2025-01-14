@@ -8,17 +8,13 @@ const backgroundStyle = `
   items-center justify-center
   bg-navyDark
   font-thin
-  overflow-hidden
+  overflow-clip
 `
 const headUIStyle = `
   header fixed top-0 right-0
   flex flex-row
 `
 
-const likeIconStyle = `
-  mr-4
-
-`
 const searchBoxStyle = `
   flex flex-row
   mt-8 mr-9
@@ -40,10 +36,6 @@ const sayingHiStyle = `
   font-pretendard
   text-thin text-center text-size.mid text-gray
   h-[100vh]
-`
-const zoomStyle = `
-  flex items-center justify-center
-  w-[100vw] h-[100vh]
 `
 const logoutStyle = `
   footer fixed bottom-0 left-0 p-2
@@ -167,7 +159,7 @@ const MainPage: React.FC = () => {
                 >눌러서 시작</button>
               )}
               </div>
-              {isIconVisible && <HexaPage className={`${fadeStyle(isIconVisible)} ${zoomStyle}`}/>}
+              {isIconVisible && <HexaPage className={fadeStyle(isIconVisible)}/>}
             </div>
             <div className={`${fadeStyle(isIconVisible)} ${footUIStyle} ${logoutStyle}`}>
                 <IconLogout onClick={handleLogout}/>

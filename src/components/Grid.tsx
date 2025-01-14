@@ -1,4 +1,3 @@
-import { userInfo } from "os";
 import React from "react";
 
 type GridProps = {
@@ -21,7 +20,7 @@ export const Grid: React.FC<GridProps> = ({isMe, user}) => {
             height="280"
             width="280"
             viewBox="0 0 160 160"
-            className="transition-transform duration-500 ease-in-out hover:scale-105"
+            className="cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105"
             onClick={() => {
                 if (isMe) {
                     window.location.href = "http://localhost:3000/my"
