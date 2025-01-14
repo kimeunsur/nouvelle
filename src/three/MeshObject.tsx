@@ -1,5 +1,5 @@
 import { Body, Box, Quaternion, Vec3 } from "cannon-es"
-import { BoxGeometry, Mesh, MeshBasicMaterial, MeshLambertMaterial, Texture } from "three"
+import { BoxGeometry, Light, Mesh, MeshBasicMaterial, MeshLambertMaterial, Texture } from "three"
 import { GLTF } from "three/examples/jsm/Addons"
 
 export class MeshObject {
@@ -29,7 +29,7 @@ export class MeshObject {
         this.height = info.height || 1;
         this.depth = info.depth || 1;
         this.color = info.color || 'white';
-        this.offsetY = info.offsetY || 0.4;
+        this.offsetY = info.offsetY || 1;
         this.x = (info.x || 0) * 1;
         this.y = (info.y || this.height / 2 + this.offsetY) * 1;
         this.z = (info.z || 0) * 1;
@@ -50,12 +50,19 @@ export class MeshObject {
                     glb.scene.traverse((child: any) => {
                         if(child.isMesh) {
                             child.castShadow = true;
+                            if (child.material){
+                                child.material = new MeshLambertMaterial({
+                                    color: this.color,
+                                    map: child.material.map,
+                                })
+                            }
                         }
                     })
                     this.mesh = glb.scene;
-                    this.mesh!.name = this.name;
-                    this.mesh!.position.set(this.x, this.y, this.z);
-                    this.mesh!.rotation.set(this.rotx, this.roty, this.rotz);
+                    glb.scene.name = this.name;
+                    glb.scene.position.set(this.x, this.y, this.z);
+                    glb.scene.rotation.set(this.rotx, this.roty, this.rotz);
+                    glb.scene.color = this.color;
                     info.scene.add(this.mesh);
 
                     // transparent mesh for raycasting
@@ -65,11 +72,12 @@ export class MeshObject {
                         new MeshBasicMaterial({
                             color: 'green',
                             transparent: true,
-                            opacity: 0.5,
+                            opacity: 0,
                         })
                     );
                     this.transparentMesh.name = this.name;
-                    this.transparentMesh.position.set(this.x, this.y, this.z)
+                    this.transparentMesh.position.set(this.x, this.y, this.z);
+                    glb.scene.rotation.set(0, Math.PI/2, 0);
                     info.scene.add(this.transparentMesh);
 
                     this.setCannonBody();
@@ -136,12 +144,12 @@ export class MeshObject {
 
         // rotation along Y
         const quatY = new Quaternion();
-        const axisY = new Vec3(1, 0, 0);
+        const axisY = new Vec3(0, 1, 0);
         quatY.setFromAxisAngle(axisY, this.roty);
 
         // rotation along Z
         const quatZ = new Quaternion();
-        const axisZ = new Vec3(1, 0, 0);
+        const axisZ = new Vec3(0, 0, 1);
         quatZ.setFromAxisAngle(axisZ, this.rotz);
 
         const combineQuat = quatX.mult(quatY).mult(quatZ)

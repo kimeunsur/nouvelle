@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { KeyController } from './KeyController';
 import { MeshObject } from './MeshObject';
 import { Player } from './Player';
+import { OrbitControls } from 'three/examples/jsm/Addons.js';
 
 const MyThree = () => {
     useEffect(() => {
@@ -33,6 +34,7 @@ const MyThree = () => {
             1000 // far
         );
         camera.position.set(0, 3, 7);
+        camera.rotation.set(0, Math.PI * 5/4, 0);
         scene.add(camera);
 
         //const controls = new OrbitControls(camera, renderer.domElement);
@@ -47,7 +49,7 @@ const MyThree = () => {
         // shadow resolution
         pointLight.shadow.mapSize.width = 2048;
         pointLight.shadow.mapSize.height = 2048;
-        pointLight.position.y = 10;
+        pointLight.position.set(0, 10, 0);
         scene.add(ambientLight, pointLight);
 
         // Cannon(Physics)
@@ -69,6 +71,7 @@ const MyThree = () => {
             playerCannonMaterial, // colliding obj1
             defaultCannonMaterial, // colliding obj2
             {
+                
                 friction: 100,
                 restitution: 0,
             }
@@ -92,24 +95,140 @@ const MyThree = () => {
         });
         cannonObjects.push(ground);
 
+        const stage = new MeshObject({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            scene,
+            name: 'stage',
+            width: 5,
+            height: 0.1,
+            depth: 5,
+            color: 0xdddddd,
+            offsetY: '0',
+        });
+        cannonObjects.push(stage);
+
         const floor = new MeshObject({
             cannonWorld,
             cannonMaterial: defaultCannonMaterial,
             scene,
             name: 'floor',
-            width: 5,
-            height: 0.4,
-            depth: 5,
+            width: 4.4,
+            height: 0.2,
+            depth: 4.4,
+            color: colors.gray,
             offsetY: '0',
-        })
+        });
         cannonObjects.push(floor);
+
+        const wallR = new MeshObject({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            scene,
+            name: 'wallR',
+            width: 4.4,
+            height: 3.8,
+            depth: 0.2,
+            y: 2.1,
+            z: 2.1,
+            color: colors.gray,
+            offsetY: '0',
+        });
+        cannonObjects.push(wallR);
+
+        const wallL = new MeshObject({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            scene,
+            name: 'wallL',
+            width: 0.2,
+            height: 3.8,
+            depth: 4.4,
+            x: 2.1,
+            y: 2.1,
+            color: colors.gray,
+            offsetY: '0',
+        });
+        cannonObjects.push(wallL);
+
+        const table = new MeshObject({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            mass: 20,
+            scene,
+            loader: gltfLoader,
+            name: 'table',
+            width: 0.72,
+            height: 0.77,
+            depth: 1.3,
+            x: 1.5,
+            y: 1,
+            z: 0,
+            modelSrc: '/table.glb'
+        })
+        cannonObjects.push(table);
+
+        const lamp = new MeshObject({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            mass: 20,
+            scene,
+            loader: gltfLoader,
+            name: 'lamp',
+            width: 0.5,
+            height: 1.8,
+            depth: 0.5,
+            x: 1.5,
+            z: 1.5,
+            modelSrc: '/lamp.glb'
+        })
+        cannonObjects.push(lamp);
+
+        const bookShelf = new MeshObject({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            mass: 100,
+            scene,
+            loader: gltfLoader,
+            name: 'bookShelf',
+            width: 0.34,
+            height: 1.8,
+            depth: 1.1,
+            x: 0,
+            y: 1,
+            z: 1.5,
+            rotx: 0,
+            roty: Math.PI/2,
+            rotz: 0,
+            modelSrc: '/bookShelf.glb'
+        })
+        cannonObjects.push(bookShelf);
+
+        const cushion = new MeshObject({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            mass: 10,
+            scene,
+            loader: gltfLoader,
+            name: 'cushion',
+            width: 0.37,
+            height: 0.37,
+            depth: 0.1,
+            x: 0.1,
+            y: 1,
+            z: 0.3,
+            modelSrc: '/cushion.glb'
+        })
+        cannonObjects.push(cushion);
 
         const player = new Player({
             scene,
+            name: 'you',
             cannonWorld,
             cannonMaterial: playerCannonMaterial,
             mass: 50,
-            z: 2,
+            x: -2,
+            z: -2,
         });
         
         // Functions
@@ -121,16 +240,19 @@ const MyThree = () => {
         
         function move() {
             if (keyController.keys['KeyW'] || keyController.keys["ArrowUp"]){
-                player.walk(-0.05, 'forward');
+                player.walk(-0.05, 'forward', scene);
             }
             if (keyController.keys['KeyS'] || keyController.keys["ArrowDown"]){
-                player.walk(0.05, 'backward');
+                player.walk(0.05, 'backward', scene);
             }
             if (keyController.keys['KeyA'] || keyController.keys["ArrowLeft"]){
-                player.walk(0.05, 'left');
+                player.walk(0.05, 'left', scene);
             }
             if (keyController.keys['KeyD'] || keyController.keys["ArrowRight"]){
-                player.walk(0.05, 'right');
+                player.walk(0.05, 'right', scene);
+            }
+            if (keyController.keys['Space'] || !player.isJumping){
+                player.jump();
             }
         }
         let movementX = 0;
@@ -222,6 +344,8 @@ const MyThree = () => {
                 player.z = player.cannonBody.position.z;
                 move()
             }
+
+            if (player.cannonBody.velocity.y === 0) { player.isJumping = false; }
         
             moveCamera();
             renderer.render(scene, camera);
@@ -238,11 +362,6 @@ const MyThree = () => {
         });
         
         canvas.addEventListener('click', event => {
-            // [moblie mode] remap the screen coordinate from [0, width] to [-1, 1]
-            // mouse.x = event.clientX / canvas.clientWidth * 2 - 1;
-            // mouse.y = -(event.clientY / canvas.clientHeight * 2 - 1);
-            // checkIntersects();
-        
             mouse.x = 0;
             mouse.y = 0;
             if(document.body.dataset.mode === 'game'){

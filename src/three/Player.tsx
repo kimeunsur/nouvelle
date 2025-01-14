@@ -1,5 +1,7 @@
+import { EventType } from "@testing-library/react"
 import { Body, Box, Quaternion, Vec3 } from "cannon-es"
-import { BoxGeometry, Mesh, MeshLambertMaterial, } from "three"
+import { BoxGeometry, Mesh, MeshLambertMaterial, Scene, Vector3 } from "three"
+import { Raycaster } from "three"
 
 export class Player {
     name: string
@@ -20,6 +22,7 @@ export class Player {
     cannonBody: any
     mesh
     transparentMesh: any
+    isJumping: boolean
 
     constructor(info: any) {
         this.name = info.name;
@@ -29,7 +32,7 @@ export class Player {
         this.color = info.color || 'white';
         this.offsetY = info.offsetY || 0.4;
         this.x = (info.x || 0) * 1;
-        this.y = (info.y || this.height / 2 + this.offsetY) * 1;
+        this.y = (info.y || 0) * 1 + this.height / 2 + this.offsetY;
         this.z = (info.z || 0) * 1;
         this.rotx = info.rotx || 0;
         this.roty = info.roty || 0;
@@ -50,10 +53,12 @@ export class Player {
         this.mesh.rotation.set(this.rotx, this.roty, this.rotz);
         info.scene.add(this.mesh);
 
+        this.isJumping = false;
+
         this.setCannonBody()
     }
 
-    walk(value: number, direction: string) {
+    walk(value: number, direction: string, scene: any) {
         if (direction === 'left'){ // -90 deg
             this.roty -= Math.PI / 2;
         }
@@ -65,10 +70,17 @@ export class Player {
         this.z += Math.cos(this.roty) * value;
         if (this.cannonBody) {
             this.cannonBody.position.x = this.x;
+            this.cannonBody.position.y = this.y;
             this.cannonBody.position.z = this.z;
             this.mesh.position.x = this.x;
+            this.mesh.position.y = this.y;
             this.mesh.position.z = this.z;
         }
+    }
+
+    jump() {
+        this.isJumping = true;
+        this.cannonBody.velocity.y = 5;
     }
 
     setCannonBody() {
@@ -87,12 +99,12 @@ export class Player {
 
         // rotation along Y
         const quatY = new Quaternion();
-        const axisY = new Vec3(1, 0, 0);
+        const axisY = new Vec3(0, 1, 0);
         quatY.setFromAxisAngle(axisY, this.roty);
 
         // rotation along Z
         const quatZ = new Quaternion();
-        const axisZ = new Vec3(1, 0, 0);
+        const axisZ = new Vec3(0, 0, 1);
         quatZ.setFromAxisAngle(axisZ, this.rotz);
 
         const combineQuat = quatX.mult(quatY).mult(quatZ)

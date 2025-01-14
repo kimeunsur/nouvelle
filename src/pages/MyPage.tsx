@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import MyThree from "../three/myThree"
 
 const markerStyle = `
@@ -20,10 +20,19 @@ transform -translate-x-1/2 -translate-y-1/2
 
 const MyPage: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    
     return (
         <>
         <canvas id="myRoom" ref={canvasRef} className="absolute left-0 top-0"></canvas>
-        <div id="target-marker" className={markerStyle}></div>
+        <svg id="_레이어_3" data-name="레이어 3" xmlns="http://www.w3.org/2000/svg"
+            height="24"
+            width="24"
+            viewBox="0 0 160 160"
+            className={markerStyle}>
+            <polygon className='fill-yellow' points="80.2 2.41 12.83 41.3 12.83 119.09 80.2 157.99 147.57 119.09 147.57 41.3 80.2 2.41"/>
+            <polygon className='fill-navyDark' points="80.2 4.83 14.93 42.51 14.93 117.88 80.2 155.57 145.47 117.88 145.47 42.51 80.2 4.83"/>
+            <polygon className='fill-yellow' points="80.2 7.85 17.54 44.02 17.54 116.37 80.2 152.54 142.85 116.37 142.85 44.02 80.2 7.85"/>
+        </svg>
         <MyThree />
         </>
     )
