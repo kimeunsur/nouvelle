@@ -243,7 +243,7 @@ const MyThree = () => {
                 lampLight.shadow.mapSize.width = 2048;
                 lampLight.shadow.mapSize.height = 2048;
                 if(lamp.mesh){
-                lampLight.position.y = 0.75;
+                    lampLight.position.y = 0.75;
                     lamp.mesh.add(lampLight);
                     console.log(lampLight.position);
                 }
@@ -492,7 +492,7 @@ const MyThree = () => {
             const intersects = raycaster.intersectObjects(scene.children)
             if (intersects.length > 0) {
                 if (hoveredObject !== intersects[0].object) {
-            console.log(intersects[0].object.name);
+                    console.log(intersects[0].object.name);
                     hoveredObject = intersects[0].object;
                     caption1.position.copy(hoveredObject.position).add(new THREE.Vector3(0, 1, 0));
 
