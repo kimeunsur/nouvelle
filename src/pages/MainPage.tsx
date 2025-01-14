@@ -1,7 +1,8 @@
-import { Component, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IconLIke, IconLogout, IconSearch } from "../components/icons";
 import { requestSys } from "../systems/Requests";
-import HexaPage from "../components/HexaPage";
+import {HexaPage} from "../components/HexaPage";
+import {Grid} from '../components/Grid';
 
 const backgroundStyle = `
   w-[100vw] h-[100vh]
@@ -46,6 +47,15 @@ const fadeStyle = (signal: boolean) => `
   transition-opacity duration-1000 ease-in-out
 `
 
+type User = {
+    email: string;
+    name: string;
+};
+type ChildComponentProp = {
+    userInfo: User | null;
+    users: User[];
+}
+
 const MainPage: React.FC = () => {
     const [searchingQuery, setSearchingQuery] = useState<string>("");
     const [isFilterOn, setIsFilterOn] = useState<boolean>(false);
@@ -55,6 +65,7 @@ const MainPage: React.FC = () => {
     const [isThirdVisible, setIsThirdVisible] = useState<boolean>(false);
     const [isIconVisible, setIsIconVisible] = useState<boolean>(false);
     const [isButtonVisible, setIsButtonVisible] = useState<boolean>(true);
+
 
     useEffect(() => {
         // URL에서 'email' 값을 추출
@@ -96,6 +107,30 @@ const MainPage: React.FC = () => {
           clearTimeout(timer3);
         };
       }, []);
+      const [userData, setUserData] = useState<{email: string; name: string}[] | null>([]);
+
+      useEffect(() => {
+        const fetchUsers = async () => {
+        try {
+          const response = await fetch(`http://127.0.0.1:5000/grid_auth/searchQ?query=${searchingQuery}`); // API 호출
+          const data = await response.json();
+          console.log('searching data:', data);
+          //context
+          setUserData(data); // 데이터를 상태로 저장
+        } catch (error) {
+          console.error('failed', error);
+        }
+      };
+      if (searchingQuery) {
+        fetchUsers();
+      } else {
+        setUserData(null);
+      }
+      }, [searchingQuery]);
+
+
+
+
 
       const saveUserInfo = async (response: Response) => {
         try {
@@ -136,9 +171,11 @@ const MainPage: React.FC = () => {
               <div className={searchBoxStyle}>
                   <input value={searchingQuery}
                           onChange={(e) => setSearchingQuery(e.target.value)}
+                          placeholder="Search names..."
                           className={inputStyle} />
                   <IconSearch className="mt-1" />
               </div>
+ 
             </div>
             <div className={sayingHiStyle}>
               <div className={fadeStyle(isFirstVisible)}>
@@ -159,7 +196,7 @@ const MainPage: React.FC = () => {
                 >눌러서 시작</button>
               )}
               </div>
-              {isIconVisible && <HexaPage className={fadeStyle(isIconVisible)}/>}
+              {isIconVisible && <HexaPage className={fadeStyle(isIconVisible)} userData={userData}/>}
             </div>
             <div className={`${fadeStyle(isIconVisible)} ${footUIStyle} ${logoutStyle}`}>
                 <IconLogout onClick={handleLogout}/>

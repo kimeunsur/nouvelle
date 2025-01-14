@@ -39,3 +39,14 @@ def get_all_users():
         return jsonify({"users":users}), 200
     except Exception as e:
         return jsonify({"message": f"error: {str(e)}"}), 500
+    
+@grid_bp.route("/searchQ", methods=["GET"])
+def searchQ():
+    search_query = request.args.get('query', '')
+    if search_query:
+        users = auth_collection.find({"name": {"$regex": search_query, "$options": "i"}})
+    else:
+        users = auth_collection.find()
+    
+    result = [{"name": user["name"], "email":user["email"]} for user in users]
+    return jsonify(result)
