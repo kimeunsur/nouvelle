@@ -72,19 +72,20 @@ const MainPage: React.FC = () => {
     useEffect(() => {
         // URL에서 'email' 값을 추출
         const urlParams = new URLSearchParams(window.location.search);
-        const email = urlParams.get('email');
+        let email = urlParams.get('email');
         const isTurningBack = urlParams.get('turnback');
-
-        if (email) {
-          // 백엔드에 POST 요청을 보내어 사용자의 메일과 이름 저장
-          requestSys.getUser(email).then((res) => saveUserInfo(res))
-        }        
-        const savedUser = localStorage.getItem('user');
+        const savedUser = localStorage.getItem('user');        
         if (savedUser) {
             const userData = JSON.parse(savedUser);
             setUserName(userData.name); // 사용자 이름 저장
             console.log('로그인 정보 복원 성공:', userData.user.name);
             console.log("받은 사용자 데이터:", userData); // 데이터 구조 확인
+            email = savedUser;
+        }
+
+        if (email) {
+          // 백엔드에 POST 요청을 보내어 사용자의 메일과 이름 저장
+          requestSys.getUser(email).then((res) => saveUserInfo(res))
         }
 
         if(isTurningBack)

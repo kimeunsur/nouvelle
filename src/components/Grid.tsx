@@ -63,9 +63,7 @@ export const Grid: React.FC<GridProps &ChildComponentProp> = ({isMe, user, userI
             viewBox="0 0 160 160"
             className="cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105"
             onClick={() => {
-                if (isMe) {
                     window.location.href = `http://localhost:3000/my?email=${user.email}`
-                }
                 }}
             >
             <polygon className={isMe? 'fill-yellow' : 'fill-gray'} points="80.2 2.41 12.83 41.3 12.83 119.09 80.2 157.99 147.57 119.09 147.57 41.3 80.2 2.41"/>

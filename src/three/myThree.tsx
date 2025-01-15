@@ -321,6 +321,7 @@ const MyThree: React.FC<{config: configType}> = ({config}) => {
         cannonObjects.push(bookShelf);
 
         const cushions: Cushion[] = [];
+        if(config.stack[0]){
         for(let i=0; i<Math.min(config.stack[0].length, 5); i++){
             console.log(config.stack[0][i]);
             const texture = config.stack[0][i];
@@ -339,7 +340,7 @@ const MyThree: React.FC<{config: configType}> = ({config}) => {
             });
             cannonObjects.push(cushion);
             cushions.push(cushion);
-        }
+        }}
 
         const post1 = new Post({
             cannonWorld,
@@ -429,10 +430,11 @@ const MyThree: React.FC<{config: configType}> = ({config}) => {
         // hover caption
         const captions: THREE.Sprite[] = [];
         const stackNames = config.stack[0];
+        if(stackNames){
         for(let i = 0; i < stackNames.length; i++){
             captions[i] = createCaption(stackNames[i]);
             scene.add(captions[i]);
-        }
+        }}
 
         function createCaption(text: string) {
             const captionSpriteMaterial = new THREE.SpriteMaterial({
@@ -559,7 +561,7 @@ const MyThree: React.FC<{config: configType}> = ({config}) => {
                             break;
                         }
                     }
-                } else if (hoveredObject !== selectedObject) {
+                } else if ((hoveredObject !== selectedObject) && config.stack[0]) {
                     hoveredObject = selectedObject;
                     for (let i=0; i<5; i++){
                         if (selectedObject.name === `cushion${config.stack[0][i]}`){
