@@ -1,14 +1,16 @@
 import { Body, Box, Quaternion, Vec3 } from "cannon-es"
 import { BoxGeometry,
+         Group,
          Light,
          Mesh,
          MeshBasicMaterial,
          MeshLambertMaterial,
+         Object3D,
          PointLight,
          Texture, 
          TextureLoader,
          TorusGeometry} from "three"
-import { GLTFLoader } from "three/examples/jsm/Addons"
+import { GLTF, GLTFLoader } from "three/examples/jsm/Addons"
 
 export class MeshObject {
     name: string
@@ -31,7 +33,7 @@ export class MeshObject {
     cannonWorld
     cannonMaterial
     cannonBody: any
-    mesh
+    mesh: Object3D | Group
     transparentMesh: any
 
     constructor(info: any) {
@@ -56,30 +58,32 @@ export class MeshObject {
         this.mass = info.mass || 0;
         this.cannonWorld = info.cannonWorld;
         this.cannonMaterial = info.cannonMaterial;
+        this.mesh = new Mesh();
 
         if(info.modelSrc) {
             info.loader.load(
                 info.modelSrc,
-                (glb: any) => {
-                    glb.scene.traverse((child: any) => {
-                        if(child.isMesh) {
-                            child.castShadow = true;
-                            if (child.material){
+                (glb: GLTF) => {
+                    glb.scene.traverse((child: Object3D) => {
+                        if((child as Mesh).isMesh) {
+                            const mesh = child as Mesh;
+                            mesh.castShadow = true;
+                            if (mesh.material){
                                 const texture = info.mapSrc? new TextureLoader().load(info.mapSrc) : null;
 
-                                child.material = new MeshLambertMaterial({
+                                mesh.material = new MeshLambertMaterial({
                                     color: texture? undefined : this.color,
-                                    map: texture || child.material.map,
+                                    map: texture || (mesh.material as MeshLambertMaterial).map,
                                 })
                             }
+                            child.name = this.name;
                         }
                     })
-                    this.mesh = glb.scene;
+                    this.mesh = glb.scene as Group;
                     glb.scene.name = this.name;
                     glb.scene.position.set(this.x, this.y, this.z);
                     glb.scene.rotation.set(this.rotx, this.roty, this.rotz);
                     glb.scene.scale.set(this.scx, this.scy, this.scz);
-                    glb.scene.color = this.color;
                     info.scene.add(this.mesh);
 
                     // transparent mesh for raycasting
