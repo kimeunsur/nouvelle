@@ -15,6 +15,7 @@ client = MongoClient("mongodb+srv://admin:adminadmin77@nouvelle.58oqk.mongodb.ne
 db = client['nouvelle']
 auth_collection = db['Auth']
 item_collection = db['Item']
+friend_collection = db['Friend']
 auth_bp = Blueprint('auth', __name__) 
 
 SECRET_KEY="1234"
@@ -40,6 +41,11 @@ def signup():
             "external_link2": "https://www.daum.net/",
             "email":  auth_data.email
         })
+        friend_collection.insert_one({
+            "email":auth_data.email,
+            "fstack": []
+        })
+        
         # MongoDB에 저장
         auth_collection.insert_one(auth_data.to_mongo_dict())
         #return jsonify({"message": "User created successfully"}), 201

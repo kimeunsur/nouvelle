@@ -7,6 +7,7 @@ client = MongoClient("mongodb+srv://admin:adminadmin77@nouvelle.58oqk.mongodb.ne
 db = client["nouvelle"]
 auth_collection = db["Auth"]
 item_collection = db["Item"]
+friend_collection = db['Friend']
 
 CLIENT_ID = "97f19a31a9792b881a572c4b557f52f2"
 CLIENT_SECRET = "aQheaRjnvnmxdmOse1CVzAKrYWYJvQvY"
@@ -71,5 +72,9 @@ def save_user_to_mongodb(user_info):
             "external_link1": "https://www.naver.com/",
             "external_link2": "https://www.daum.net/",
             "email":  kakao_account.get('email')
+        })
+    friend_collection.insert_one({
+            "email": kakao_account.get('email'),
+            "fstack": []
         })
     return result

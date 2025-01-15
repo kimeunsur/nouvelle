@@ -99,7 +99,6 @@ class RequestSys {
 
     storeItem = async (email: string, itemData: itemType) => {
         try {
-            console.log('sending request:', itemData);
             const response = await fetch('http://127.0.0.1:5000/item/get_edit_info', {
                 method: 'POST',
                 headers: {
@@ -125,8 +124,26 @@ class RequestSys {
         }
     }
 
-
+    addFriend = async (email: string, fname: string) => {
+        try {
+            const response = await fetch ('http://127.0.0.1:5000/friend/add_friend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }, 
+                body: JSON.stringify({
+                    email: email,
+                    fname: fname
+                })
+            })            
+            if (!response.ok) {
+                throw new Error("친구 추가 백까지 안 넘어감");
+            }
+        } catch (error) {
+            console.error('친구 추가 중 오류 발생:', error);
+            throw error;   
+        }
+    }
 }
-
 // Fixed missing closing curly brace for the RequestSys class
 export const requestSys = new RequestSys();

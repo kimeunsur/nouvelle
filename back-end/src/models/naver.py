@@ -7,6 +7,7 @@ client = MongoClient("mongodb+srv://admin:adminadmin77@nouvelle.58oqk.mongodb.ne
 db = client["nouvelle"]
 auth_collection = db["Auth"]
 item_collection = db["Item"]
+friend_collection = db['Friend']
 CLIENT_ID = "lRgFOjhvIeBEWzlRLXBI"
 CLIENT_SECRET = "vXgNaAglSB"
 REDIRECT_URI = "http://127.0.0.1:5000/naver_auth/login/callback"
@@ -64,5 +65,9 @@ def save_user_to_mongodb(user_info):
             "external_link1": "https://www.naver.com/",
             "external_link2": "https://www.daum.net/",
             "email":  user_info["email"]
+        })
+    friend_collection.insert_one({
+            "email": user_info["email"],
+            "fstack": []
         })
     return result

@@ -11,7 +11,7 @@ export const IconLIke: React.FC<IconLIkeProps> = ({className, isOn, setIsOn}) =>
             height="40"
             width="40"
             viewBox="0 0 160 160"
-            fill={isOn? colors.yellow : colors.gray}
+            fill={isOn? colors.pink : colors.babypink}
             className={`mt-8 ${className}`}
             onClick={setIsOn}
             cursor="pointer">

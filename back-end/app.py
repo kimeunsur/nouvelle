@@ -6,6 +6,7 @@ from src.routes.naver_auth import naver_bp
 from src.routes.kakao_auth import kakao_bp
 from src.routes.item import item_bp
 from src.routes.grids import grid_bp
+from src.routes.friend import friend_bp
 from flask_cors import CORS
 import jwt
 
@@ -30,6 +31,7 @@ app.register_blueprint(naver_bp, url_prefix='/naver_auth')
 app.register_blueprint(kakao_bp, url_prefix='/kakao_auth')
 app.register_blueprint(grid_bp, url_prefix='/grid_auth')
 app.register_blueprint(item_bp, url_prefix='/item')
+app.register_blueprint(friend_bp, url_prefix='/friend')
 
 if __name__ == '__main__':
     app.run(debug=True)
