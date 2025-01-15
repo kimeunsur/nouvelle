@@ -94,7 +94,8 @@ class RequestSys {
                 body: JSON.stringify({
                     "color": itemData.color,
                     "stack": itemData.stack,
-                    "external_link": itemData.external_link,
+                    "external_link1": itemData.external_link1,
+                    "external_link2": itemData.external_link2,
                     "email": email,     
                 }),
             });

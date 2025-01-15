@@ -22,27 +22,31 @@ item_bp = Blueprint('item', __name__)
 def get_edit_info():
     try :
         data = request.json
-        if "itemData" in data and "email" in data:
-            data = {
-                **data["itemData"],
-                "email": data["email"]
-            }
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+
+        required_keys = {"color", "stack", "external_link1", "external_link2", "email"}
+        if not required_keys.issubset(data):
+            return jsonify({"error": "Invalid data structure", "details": data}), 400
+
         item = ItemSchema(**data)
 
         result = item_collection.insert_one({
             "color": item.color,
             "stack": item.stack,
-            "external_link": str(item.external_link),
+            "external_link1": str(item.external_link1),
+            "external_link2": str(item.external_link2),
             "email": item.email,
         })
         item_data = {
             "_id": str(result.inserted_id),
             "color": item.color,
             "stack": item.stack,
-            "external_link": str(item.external_link),
+            "external_link1": str(item.external_link1),
+            "external_link2": str(item.external_link2),
             "email": item.email,     
         }
-        item_collection.insert_one(item_data)
+        #item_collection.insert_one(item_data)
         
         return jsonify({"message": "Item saved successfully", "data": item_data}), 201
     except ValidationError as e:

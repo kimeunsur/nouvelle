@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './LandingPage';
 import MainPage from './MainPage';
 import MyPage from './MyPage';
-import EditPage from './EditPage';
+import { EditPage } from './EditPage';
 import { userInfo } from 'os';
 import { useState } from 'react';
 
