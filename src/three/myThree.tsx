@@ -56,7 +56,7 @@ const MyThree = () => {
         const sunLight = new THREE.PointLight(0xffffff, 1, 500);
         sunLight.shadow.mapSize.width = 1024;
         sunLight.shadow.mapSize.height = 1024;
-        sunLight.position.set(60, 60, 0);
+        sunLight.position.set(60, 30, 0);
         scene.add(sunLight);
 
         // Glow effect
@@ -87,7 +87,7 @@ const MyThree = () => {
             transparent: true,
         });
         
-        const glowMesh = new THREE.Mesh(new THREE.SphereGeometry(6, 32, 32), glowMaterial); // Slightly larger sphere
+        const glowMesh = new THREE.Mesh(new THREE.SphereGeometry(5, 32, 32), glowMaterial); // Slightly larger sphere
         glowMesh.position.copy(sunLight.position);
         scene.add(glowMesh);
 
@@ -121,19 +121,19 @@ const MyThree = () => {
 
         /* Meshes */
 
-        const ground = new MeshObject({
+        const water = new MeshObject({
             cannonWorld,
             cannonMaterial: defaultCannonMaterial,
             scene,
-            name: 'ground',
+            name: 'water',
             width: 100,
             height: 0.1,
             depth: 100,
-            color: '#110c1f',
+            color: '#5F4F9D',
             y: -0.05,
             offsetY: '0',
         });
-        cannonObjects.push(ground);
+        cannonObjects.push(water);
 
         const land = new MeshObject({
             cannonWorld,
@@ -237,7 +237,7 @@ const MyThree = () => {
             z: -1,
             modelSrc: '/lamp.glb',
             callback: () => {
-                const lampLight = new THREE.PointLight('#ea6ab', 0, 50);
+                const lampLight = new THREE.PointLight('#eea6ab', 0, 50);
                 lampLight.castShadow = true;
                 lampLight.shadow.mapSize.width = 2048;
                 lampLight.shadow.mapSize.height = 2048;
@@ -414,7 +414,7 @@ const MyThree = () => {
         /* Texts */
 
         const refSpriteMaterial = new THREE.SpriteMaterial({
-            map: new THREE.CanvasTexture(createTitleTextCanvas('둘러보기', 24)),
+            map: createTextTexture('둘러보기', 24),
         });
         const refsprite = new THREE.Sprite(refSpriteMaterial);
         refsprite.scale.set(1, 0.5, 0.5); // Adjust size
@@ -422,7 +422,7 @@ const MyThree = () => {
         scene.add(refsprite);
 
         const stackSpriteMaterial = new THREE.SpriteMaterial({
-            map: new THREE.CanvasTexture(createTitleTextCanvas('나의 기술스택', 24)),
+            map: createTextTexture('나의 기술스택', 24),
         });
         const stacksprite = new THREE.Sprite(stackSpriteMaterial);
         stacksprite.scale.set(1, 0.5, 0.5); // Adjust size
@@ -430,25 +430,29 @@ const MyThree = () => {
         scene.add(stacksprite);
         
         // Helper to create text canvas
-        function createTitleTextCanvas(text: string, size: number) {
+        function createTextTexture(text: string, size: number, color?: string) {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = 300;
             canvas.height = 128;
-            ctx!.fillStyle = 'white';
+            ctx!.fillStyle = color || 'white';
             ctx!.font = `${size}px Pretendard`;
             ctx!.textAlign = 'center';
             ctx!.textBaseline = 'middle';
             ctx!.fillText(text, canvas.width / 2, canvas.height / 2);
-            return canvas;
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.minFilter = THREE.LinearFilter;
+            return texture;
         }
 
+        // hover caption
         const caption1 = createCaption("stack");
         scene.add(caption1);
 
         function createCaption(text: string) {
             const captionSpriteMaterial = new THREE.SpriteMaterial({
-                map: new THREE.CanvasTexture(createTitleTextCanvas('스택', 16)),
+                map: createTextTexture('스택', 16),
                 transparent: true,
             });
             const captionsprite = new THREE.Sprite(captionSpriteMaterial);
@@ -457,8 +461,34 @@ const MyThree = () => {
 
             return captionsprite;
         }
+
+        // fixed text
+        const linkTexture1 = createTextTexture('링크1', 16, 'black');
+        const linkTexture2 = createTextTexture('링크2', 16, 'black');
+
+        const linkPlaneGeometry = new THREE.PlaneGeometry(0.5, 0.5); // Adjust width and height
+
+        const linkPlaneMaterial1 = new THREE.MeshBasicMaterial({
+            map: linkTexture1,
+            transparent: true,
+        });
+        const linkTextPlane1 = new THREE.Mesh(linkPlaneGeometry, linkPlaneMaterial1);
+
+        const linkPlaneMaterial2 = new THREE.MeshBasicMaterial({
+            map: linkTexture2,
+            transparent: true,
+        });
+        const linkTextPlane2 = new THREE.Mesh(linkPlaneGeometry, linkPlaneMaterial2);
+
+        linkTextPlane1.position.set(post1.x, post1.y, post1.z-0.08); // Adjust as needed
+        linkTextPlane1.rotation.set(0, Math.PI, 0); // Keep it static in the scene
+        linkTextPlane2.position.set(post2.x, post2.y, post2.z-0.08); // Adjust as needed
+        linkTextPlane2.rotation.set(0, Math.PI, 0); // Keep it static in the scene
+
+        scene.add(linkTextPlane1, linkTextPlane2);
         
-        // Functions
+        /* Functions */
+
         function setLayout() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();

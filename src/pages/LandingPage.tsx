@@ -22,7 +22,7 @@ const landingTitleStyle = `
 `
 const landingCopyStyle = `
   text-2xl text-gray 
-  font-inter
+  font-pretendard
   w-[60vw]
   mb-12
 `
@@ -82,7 +82,9 @@ const LandingPage: React.FC = () => {
             Nouvelle Vague
           </h1>
           <p className={landingCopyStyle}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          새로운 공간에서 당신의 이야기가 펼쳐집니다.
+          <br/>
+          Nouvelle, 당신의 포트폴리오를 감각적으로 경험하다.
           </p>
           <button
             className={landingStartButtonStyle}

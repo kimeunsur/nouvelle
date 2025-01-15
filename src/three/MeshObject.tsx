@@ -72,7 +72,7 @@ export class MeshObject {
                                 const texture = info.mapSrc? new TextureLoader().load(info.mapSrc) : null;
 
                                 mesh.material = new MeshLambertMaterial({
-                                    color: texture? undefined : this.color,
+                                    color: texture? "white" : this.color,
                                     map: texture || (mesh.material as MeshLambertMaterial).map,
                                 })
                             }
