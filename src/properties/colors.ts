@@ -5,4 +5,6 @@ export const colors = {
     yellow: "#F9C784",
     navyDark: "#3a4578",
     naverGreen: "#037c5a",
+    pink: '#ff00ee',
+    babypink: '#8c538b'
   };

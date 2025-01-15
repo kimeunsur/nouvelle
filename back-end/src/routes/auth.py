@@ -8,12 +8,14 @@ import logging
 from pymongo.errors import PyMongoError
 import jwt
 from datetime import datetime, timedelta
+from src.models.Item import ItemSchema
 
 # MongoDB 연결
 client = MongoClient("mongodb+srv://admin:adminadmin77@nouvelle.58oqk.mongodb.net/")
 db = client['nouvelle']
 auth_collection = db['Auth']
-
+item_collection = db['Item']
+friend_collection = db['Friend']
 auth_bp = Blueprint('auth', __name__) 
 
 SECRET_KEY="1234"
@@ -31,11 +33,25 @@ def signup():
         # MongoDB에서 이미 해당 이메일이 존재하는지 확인
         if auth_collection.find_one({"email": auth_data.email}):
             return jsonify({"message": "Email already exists"}), 400
-
+        
+        item_collection.insert_one({
+            "color": "#ffffff",
+            "stack": [],
+            "external_link1": "https://www.naver.com/",
+            "external_link2": "https://www.daum.net/",
+            "email":  auth_data.email
+        })
+        friend_collection.insert_one({
+            "email":auth_data.email,
+            "fstack": []
+        })
+        
         # MongoDB에 저장
         auth_collection.insert_one(auth_data.to_mongo_dict())
         #return jsonify({"message": "User created successfully"}), 201
         return jsonify({"message": "User created successful", "user": {"email": auth_data.email, "name": auth_data.name}}), 200
+        
+
         
     except ValidationError as e:
         # 모델 검증 실패 시 에러 메시지 반환

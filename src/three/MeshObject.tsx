@@ -92,7 +92,7 @@ export class MeshObject {
                         new MeshBasicMaterial({
                             color: 'green',
                             transparent: true,
-                            opacity: 0,
+                            opacity: 0.2,
                         })
                     );
                     this.transparentMesh.name = this.name+" coll";

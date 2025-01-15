@@ -2,6 +2,9 @@ import React, { useState, useCallback, useEffect } from "react";
 import { ChromePicker, ColorResult } from "react-color";
 import { InputEditbox } from "../components/InputTextbox";
 import { requestSys } from "../systems/Requests";
+import MainPage from "./MainPage";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 export type itemType = {
   color: string;
@@ -48,13 +51,17 @@ export const EditPage: React.FC = () => {
         ...itemFormData,
         email: userEmail,
       };
-      const result = await requestSys.getItem(userEmail, payload);
+      const result = await requestSys.storeItem(userEmail, payload);
       console.log("item result:", result);
     } catch (error) {
       console.error("Item register failed", error);
     }
   };
 
+  const navigate = useNavigate();
+  const gotoMainPage = () => {
+    navigate(`/main?turnback=1&email=${userEmail}`);
+  }
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const email = urlParams.get("email");
@@ -66,6 +73,7 @@ export const EditPage: React.FC = () => {
     }
   }, []);
 
+  //console.log("성공!",requestSys.bringItem(userEmail));
   return (
     <form className="w-[100vw] h-[100vh] bg-navyDark flex flex-row text-white text-xl justify-center items-center" onSubmit={handleSubmit}>
       <div>
@@ -154,8 +162,8 @@ export const EditPage: React.FC = () => {
         </div>
       </div>
       <div>
-        <button type="submit" className="ml-12 text-2xl hover:text-yellow">
-          Sign in
+        <button type="submit" className="ml-12 text-2xl hover:text-yellow" onClick={gotoMainPage}>
+          생성
         </button>
       </div>
     </form>

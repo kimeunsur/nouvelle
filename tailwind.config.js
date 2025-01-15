@@ -11,6 +11,8 @@ module.exports = {
         gray: colors.gray,
         naverGreen: colors.naverGreen,
         navyDark: colors.navyDark,
+        pink: colors.pink,
+        babypink: colors.babypink
       },
       fontFamily: {
         pretendard: ['Pretendard', 'sans-serif'],

@@ -66,6 +66,7 @@ const MainPage: React.FC = () => {
     const [isIconVisible, setIsIconVisible] = useState<boolean>(false);
     const [isButtonVisible, setIsButtonVisible] = useState<boolean>(true);
 
+    
 
     useEffect(() => {
         // URL에서 'email' 값을 추출
@@ -128,7 +129,21 @@ const MainPage: React.FC = () => {
       }
       }, [searchingQuery]);
 
-
+      const handleEditMenu = (e: React.MouseEvent) => {
+        e.preventDefault();
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+          const userData = JSON.parse(savedUser); // 저장된 사용자 정보 파싱
+          const email = userData?.user?.email; // 이메일 추출
+          if (email) {
+            window.location.href = `http://localhost:3000/myedit?email=${email}`; // 이메일을 URL 끝에 추가
+          } else {
+            console.error('사용자 이메일이 없습니다.');
+          }
+        } else {
+          console.error('사용자 정보가 저장되지 않았습니다.');
+        }
+      }
 
 
 
@@ -162,7 +177,7 @@ const MainPage: React.FC = () => {
         setIsButtonVisible(false);
       }
     return (
-        <div className={backgroundStyle}>
+        <div className={backgroundStyle} onContextMenu={handleEditMenu}>
             <div className={`${fadeStyle(isIconVisible)} ${headUIStyle}`}>
               <IconLIke className="mr-4"
                         isOn={isFilterOn} 
@@ -200,24 +215,6 @@ const MainPage: React.FC = () => {
             </div>
             <div className={`${fadeStyle(isIconVisible)} ${footUIStyle} ${logoutStyle}`}>
                 <IconLogout onClick={handleLogout}/>
-                <button
-                  onClick={() => {
-                    const savedUser = localStorage.getItem('user');
-                    if (savedUser) {
-                      const userData = JSON.parse(savedUser); // 저장된 사용자 정보 파싱
-                      const email = userData?.user?.email; // 이메일 추출
-                      if (email) {
-                        window.location.href = `http://localhost:3000/myedit?email=${email}`; // 이메일을 URL 끝에 추가
-                      } else {
-                        console.error('사용자 이메일이 없습니다.');
-                      }
-                    } else {
-                      console.error('사용자 정보가 저장되지 않았습니다.');
-                    }
-                  }}
-                >
-                  go to edit
-                </button>
             </div>
         </div>
     );

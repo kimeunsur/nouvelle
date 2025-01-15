@@ -1,4 +1,6 @@
-import React from "react";
+import React, {useState} from "react";
+import { IconLIke } from "./icons";
+import {requestSys} from '../systems/Requests';
 
 type GridProps = {
     isMe: boolean;
@@ -9,6 +11,18 @@ interface GetDataProps {
     userData: { email: string; name: string }[] | null; // 전달받을 데이터의 타입 정의
 }
 
+type User = {
+    email: string;
+    name: string;
+};
+type ChildComponentProp = {
+    userInfo: User | null;
+    users: User[];
+}
+
+type HexagonLayoutProp = {
+    users: User[];
+};
 const gridStyle = `
     user-info
     absolute top-1/2 left-1/2
@@ -18,8 +32,9 @@ const gridStyle = `
 `
 
 export const Grid: React.FC<GridProps> = ({isMe, user}) => {
-
-    
+    const [isFilterOn, setIsFilterOn] = useState<boolean>(false);
+    const urlParams = new URLSearchParams(window.location.href);
+    const email = urlParams.get("email");
     return (
         <div className="realtive">
         <svg id="_레이어_3" data-name="레이어 3" xmlns="http://www.w3.org/2000/svg"
@@ -37,27 +52,30 @@ export const Grid: React.FC<GridProps> = ({isMe, user}) => {
             <polygon className='fill-navyDark' points="80.2 4.83 14.93 42.51 14.93 117.88 80.2 155.57 145.47 117.88 145.47 42.51 80.2 4.83"/>
             <polygon className={isMe? 'fill-yellow' : 'fill-gray'} points="80.2 7.85 17.54 44.02 17.54 116.37 80.2 152.54 142.85 116.37 142.85 44.02 80.2 7.85"/>
         </svg>
+
         <div className={gridStyle}>
-                <div className="font-bold text-sm">{user.name}</div>
-                <div className="font-thin text-xs">{user.email}</div>
+          <div 
+            onClick={(e)=> {
+              e.stopPropagation();
+              if (email) {
+                requestSys.addFriend(email, user.name);
+              }
+            }}
+          >
+            <IconLIke 
+              isOn={isFilterOn} 
+              setIsOn={() => setIsFilterOn(prev => !prev)}
+            />   
+          </div>              
+          <div className="font-bold text-sm">{user.name}</div>
+          <div className="font-thin text-xs">{user.email}</div>
             </div>
         </div>
     )
 }
 
 
-type User = {
-    email: string;
-    name: string;
-};
-type ChildComponentProp = {
-    userInfo: User | null;
-    users: User[];
-}
 
-type HexagonLayoutProp = {
-    users: User[];
-};
 
 export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp  & GetDataProps> = ({userInfo, users, userData}) => {
     const calculateLayers = (totalUsers: number): number => {
@@ -93,7 +111,9 @@ export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp  & G
           {userData && userData.length > 0 ? (
             // userData가 null이 아니고 데이터가 있을 경우
             <div className="relative">
-              {userData.map((user, index) => (
+              {userData
+              .filter(user => user.email !== (userInfo?.email || ''))
+              .map((user, index) => (
                 <div
                   key={index}
                   className="absolute top-1/2 left-1/2 transform"
@@ -105,7 +125,7 @@ export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp  & G
                     `,
                   }}
                 >
-                  <Grid isMe={false} user={user} />
+                    <Grid isMe={false} user={user} />
                 </div>
               ))}
             </div>
