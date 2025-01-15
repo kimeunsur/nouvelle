@@ -2,6 +2,9 @@ import React, { useState, useCallback, useEffect } from "react";
 import { ChromePicker, ColorResult } from "react-color";
 import { InputEditbox } from "../components/InputTextbox";
 import { requestSys } from "../systems/Requests";
+import MainPage from "./MainPage";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 export type itemType = {
   color: string;
@@ -55,9 +58,14 @@ export const EditPage: React.FC = () => {
     }
   };
 
+  const navigate = useNavigate();
+  const gotoMainPage = () => {
+    navigate(`/main?turnback=1&email=${userEmail}`);
+  }
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const email = urlParams.get("email");
+    const isTurningBack = urlParams.get('turnback');
     if (email) {
       requestSys
         .getUser(email)
@@ -154,8 +162,8 @@ export const EditPage: React.FC = () => {
         </div>
       </div>
       <div>
-        <button type="submit" className="ml-12 text-2xl hover:text-yellow">
-          Sign in
+        <button type="submit" className="ml-12 text-2xl hover:text-yellow" onClick={gotoMainPage}>
+          생성
         </button>
       </div>
     </form>
