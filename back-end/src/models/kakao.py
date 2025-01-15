@@ -1,11 +1,13 @@
 import requests
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash
-
+from src.models.Item import ItemSchema
 # MongoDB 연결
 client = MongoClient("mongodb+srv://admin:adminadmin77@nouvelle.58oqk.mongodb.net/")
 db = client["nouvelle"]
 auth_collection = db["Auth"]
+item_collection = db["Item"]
+
 CLIENT_ID = "97f19a31a9792b881a572c4b557f52f2"
 CLIENT_SECRET = "aQheaRjnvnmxdmOse1CVzAKrYWYJvQvY"
 REDIRECT_URI = "http://127.0.0.1:5000/kakao_auth/login/callback"
@@ -63,4 +65,11 @@ def save_user_to_mongodb(user_info):
         upsert=True  # 문서가 없으면 새로 삽입
     )
     
+    item_collection.insert_one({
+            "color": "#ffffff",
+            "stack": [],
+            "external_link1": "https://www.naver.com/",
+            "external_link2": "https://www.daum.net/",
+            "email":  kakao_account.get('email')
+        })
     return result

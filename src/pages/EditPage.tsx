@@ -51,7 +51,7 @@ export const EditPage: React.FC = () => {
         ...itemFormData,
         email: userEmail,
       };
-      const result = await requestSys.getItem(userEmail, payload);
+      const result = await requestSys.storeItem(userEmail, payload);
       console.log("item result:", result);
     } catch (error) {
       console.error("Item register failed", error);
@@ -65,7 +65,6 @@ export const EditPage: React.FC = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const email = urlParams.get("email");
-    const isTurningBack = urlParams.get('turnback');
     if (email) {
       requestSys
         .getUser(email)
@@ -74,6 +73,7 @@ export const EditPage: React.FC = () => {
     }
   }, []);
 
+  //console.log("성공!",requestSys.bringItem(userEmail));
   return (
     <form className="w-[100vw] h-[100vh] bg-navyDark flex flex-row text-white text-xl justify-center items-center" onSubmit={handleSubmit}>
       <div>

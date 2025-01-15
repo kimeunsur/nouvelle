@@ -93,7 +93,9 @@ export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp  & G
           {userData && userData.length > 0 ? (
             // userData가 null이 아니고 데이터가 있을 경우
             <div className="relative">
-              {userData.map((user, index) => (
+              {userData
+              .filter(user => user.email !== (userInfo?.email || ''))
+              .map((user, index) => (
                 <div
                   key={index}
                   className="absolute top-1/2 left-1/2 transform"
@@ -105,7 +107,7 @@ export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp  & G
                     `,
                   }}
                 >
-                  <Grid isMe={false} user={user} />
+                    <Grid isMe={false} user={user} />
                 </div>
               ))}
             </div>

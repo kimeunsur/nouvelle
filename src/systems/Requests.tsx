@@ -82,8 +82,22 @@ class RequestSys {
             throw error;
         }
     }
+    bringItem = async (email: string) => {
+        try {
+            return await fetch('http://127.0.0.1:5000/item/bring_user_items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({email}),
+            });
+        } catch (error) {
+            console.error('Error during bringing user item data:', error);
+            throw error;   
+        }
+    }
 
-    getItem = async (email: string, itemData: itemType) => {
+    storeItem = async (email: string, itemData: itemType) => {
         try {
             console.log('sending request:', itemData);
             const response = await fetch('http://127.0.0.1:5000/item/get_edit_info', {
