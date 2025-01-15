@@ -24,7 +24,7 @@ const MyThree = () => {
 
         // Scene
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(colors.navyDark);
+        scene.background = new THREE.Color(0x291455);
 
         // Camera
         const camera = new THREE.PerspectiveCamera(
@@ -44,18 +44,18 @@ const MyThree = () => {
 
         // Light
         const ambientLight = new THREE.AmbientLight('white', 1);
-        const pointLight = new THREE.PointLight('white', 100, 50);
+        const pointLight = new THREE.PointLight('white', 100, 100);
         pointLight.castShadow = true;
         // shadow resolution
-        pointLight.shadow.mapSize.width = 2048;
-        pointLight.shadow.mapSize.height = 2048;
+        pointLight.shadow.mapSize.width = 1024;
+        pointLight.shadow.mapSize.height = 1024;
         pointLight.position.set(0, 10, 0);
         scene.add(ambientLight, pointLight);
 
         // Sun
         const sunLight = new THREE.PointLight(0xffffff, 1, 500);
-        sunLight.shadow.mapSize.width = 2048;
-        sunLight.shadow.mapSize.height = 2048;
+        sunLight.shadow.mapSize.width = 1024;
+        sunLight.shadow.mapSize.height = 1024;
         sunLight.position.set(60, 60, 0);
         scene.add(sunLight);
 
@@ -86,7 +86,7 @@ const MyThree = () => {
             blending: THREE.AdditiveBlending,
             transparent: true,
         });
-
+        
         const glowMesh = new THREE.Mesh(new THREE.SphereGeometry(6, 32, 32), glowMaterial); // Slightly larger sphere
         glowMesh.position.copy(sunLight.position);
         scene.add(glowMesh);
@@ -110,7 +110,6 @@ const MyThree = () => {
             playerCannonMaterial, // colliding obj1
             defaultCannonMaterial, // colliding obj2
             {
-                
                 friction: 100,
                 restitution: 0,
             }
@@ -145,7 +144,7 @@ const MyThree = () => {
             width: 100,
             height: 0.1,
             depth: 100,
-            color: '#0c2410',
+            color: '#ba308c',
             y: -0.05,
             offsetY: '0',
             modelSrc: '/land.glb',
@@ -364,6 +363,44 @@ const MyThree = () => {
         })
         cannonObjects.push(cushion5);
 
+        const post1 = new MeshObject({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            scene,
+            loader: gltfLoader,
+            name: 'post1',
+            width: 0.5,
+            height: 0.1,
+            depth: 0.5,
+            x: board.x + 0.5,
+            y: board.y,
+            z: board.z - 0.1,
+            color: 'yellow',
+            rotx: -Math.PI/2,
+            roty: Math.PI,
+            modelSrc: '/post.glb'
+        })
+        cannonObjects.push(post1);
+
+        const post2 = new MeshObject({
+            cannonWorld,
+            cannonMaterial: defaultCannonMaterial,
+            scene,
+            loader: gltfLoader,
+            name: 'post2',
+            width: 0.5,
+            height: 0.1,
+            depth: 0.5,
+            x: board.x - 0.5,
+            y: board.y,
+            z: board.z - 0.1,
+            color: 'yellow',
+            rotx: -Math.PI/2,
+            roty: Math.PI,
+            modelSrc: '/post.glb'
+        })
+        cannonObjects.push(post2);
+
         const player = new Player({
             scene,
             name: 'you',
@@ -486,16 +523,17 @@ const MyThree = () => {
         const mouse = new THREE.Vector2();
         const raycaster = new THREE.Raycaster();
         let hoveredObject: THREE.Object3D | null;
-        function checkIntersects() {
+        function checkIntersects(mode: string) {
             raycaster.setFromCamera(mouse, camera);
             // children items that are hit by the ray
             const intersects = raycaster.intersectObjects(scene.children)
+            
+            if (mode === "clicked") {console.log(intersects[0].object.name);}
             if (intersects.length > 0) {
                 if (hoveredObject !== intersects[0].object) {
-                    console.log(intersects[0].object.name);
+                    //console.log(intersects[0].object.name);
                     hoveredObject = intersects[0].object;
                     caption1.position.copy(hoveredObject.position).add(new THREE.Vector3(0, 1, 0));
-
                     caption1.visible = true;
                 }
             } else {
@@ -503,7 +541,7 @@ const MyThree = () => {
                 caption1.visible = false;
             }
             for (const item of intersects) {
-                if (item.object.name === 'lamp') {
+                if (item.object.name === 'lamp' && mode === "clicked") {
                     lamp.togglePower();
                     break;
                 }
@@ -564,17 +602,19 @@ const MyThree = () => {
             movementX = event.movementX * delta /2;
             movementY = event.movementY * delta /2;
 
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            mouse.x = 0;
+            mouse.y = 0;
 
-            checkIntersects();
+            if(document.body.dataset.mode === 'game'){
+                checkIntersects("hovered");
+            }
         }
 
         const raycastIntersectHandler = () => {
             mouse.x = 0;
             mouse.y = 0;
             if(document.body.dataset.mode === 'game'){
-                checkIntersects();
+                checkIntersects("clicked");
             }
         }
 
@@ -593,7 +633,6 @@ const MyThree = () => {
         });
         
         canvas.addEventListener('click', raycastIntersectHandler);
-        canvas.addEventListener('mousemove', raycastIntersectHandler);
         
         document.addEventListener('pointerlockchange', pointerlockChangeHandler)
 
