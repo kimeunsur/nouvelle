@@ -3,6 +3,7 @@ import { IconLIke, IconLogout, IconSearch } from "../components/icons";
 import { requestSys } from "../systems/Requests";
 import {HexaPage} from "../components/HexaPage";
 import {Grid} from '../components/Grid';
+import { useFilter } from '../components/Context';
 
 const backgroundStyle = `
   w-[100vw] h-[100vh]
@@ -58,7 +59,7 @@ type ChildComponentProp = {
 
 const MainPage: React.FC = () => {
     const [searchingQuery, setSearchingQuery] = useState<string>("");
-    const [isFilterOn, setIsFilterOn] = useState<boolean>(false);
+    const {isFilterOn, setIsFilterOn} = useFilter();
     const [userName, setUserName] = useState<string | null>(null);
     const [isFirstVisible, setIsFirstVisible] = useState<boolean>(false);
     const [isSecondVisible, setIsSecondVisible] = useState<boolean>(false);
@@ -109,18 +110,16 @@ const MainPage: React.FC = () => {
         };
       }, []);
       const [userData, setUserData] = useState<{email: string; name: string}[] | null>([]);
-
       useEffect(() => {
         const fetchUsers = async () => {
         try {
           const response = await fetch(`http://127.0.0.1:5000/grid_auth/searchQ?query=${searchingQuery}`); // API 호출
           const data = await response.json();
-          console.log('searching data:', data);
           //context
-          setUserData(data); // 데이터를 상태로 저장
+          setUserData(data);
         } catch (error) {
           console.error('failed', error);
-        }
+        } 
       };
       if (searchingQuery) {
         fetchUsers();
@@ -179,10 +178,13 @@ const MainPage: React.FC = () => {
     return (
         <div className={backgroundStyle} onContextMenu={handleEditMenu}>
             <div className={`${fadeStyle(isIconVisible)} ${headUIStyle}`}>
-              <IconLIke className="mr-4"
-                        isOn={isFilterOn} 
-                        setIsOn={() => setIsFilterOn(prev => !prev)}
-              />  
+              <div 
+              >
+                <IconLIke className="mr-4"
+                          isOn={isFilterOn} 
+                          setIsOn={() => setIsFilterOn((prev: boolean) => !prev)}
+                />  
+              </div>
               <div className={searchBoxStyle}>
                   <input value={searchingQuery}
                           onChange={(e) => setSearchingQuery(e.target.value)}

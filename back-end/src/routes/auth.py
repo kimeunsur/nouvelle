@@ -88,10 +88,6 @@ def signin():
         if not check_password_hash(user['password'], password):
             return jsonify({"message": "Invalid password"}), 400
         
-
-        if isinstance(token, bytes):
-            token = token.decode('utf-8')
-        logging.info(f"Generated token: {token}")  # 토큰 확인을 위한 로그
         return jsonify({"message": "Signin successful", "user": {"email": user['email'], "name": user['name']}
                         }), 200
 

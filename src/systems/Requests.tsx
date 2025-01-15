@@ -51,12 +51,6 @@ class RequestSys {
                 window.location.href = `http://localhost:3000/main?email=${result.user.email}`;
                 console.log('로그인 성공적~', result);
 
-                if (result.token) {
-                    localStorage.setItem('token', result.token);
-                } else {
-                    console.error("Token not received");
-                    throw new Error("Token missing in response");
-                }
                 return result;
             } else {
                 console.error('실패', result);
@@ -133,6 +127,7 @@ class RequestSys {
 
     addFriend = async (email: string, fname: string) => {
         try {
+            console.log('addfriend 실행됨~')
             const response = await fetch ('http://127.0.0.1:5000/friend/add_friend', {
                 method: 'POST',
                 headers: {
@@ -150,6 +145,22 @@ class RequestSys {
             console.error('친구 추가 중 오류 발생:', error);
             throw error;   
         }
+    }
+
+    myFriend = async (email: string) => {
+        const response = await fetch ('http://127.0.0.1:5000/friend/myFriend', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }, 
+            body: JSON.stringify({email})
+        })
+        
+        if (!response.ok) {
+            throw new Error("친구 추가 백까지 안 넘어감");
+        }
+        const data = await response.json();
+        return data.fstack || [];
     }
 }
 // Fixed missing closing curly brace for the RequestSys class

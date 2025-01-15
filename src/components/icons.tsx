@@ -1,4 +1,6 @@
 import { colors } from "../properties/colors"
+import { useFilter } from '../components/Context'; // Context 사용
+
 type IconLIkeProps = {
     className?: string; // className 속성을 선택적으로 추가
     isOn: boolean;
@@ -11,7 +13,7 @@ export const IconLIke: React.FC<IconLIkeProps> = ({className, isOn, setIsOn}) =>
             height="40"
             width="40"
             viewBox="0 0 160 160"
-            fill={isOn? colors.pink : colors.babypink}
+            fill={isOn? colors.yellow : colors.gray}
             className={`mt-8 ${className}`}
             onClick={setIsOn}
             cursor="pointer">

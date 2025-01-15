@@ -1,6 +1,7 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { IconLIke } from "./icons";
 import {requestSys} from '../systems/Requests';
+import { useFilter } from './Context';
 
 type GridProps = {
     isMe: boolean;
@@ -31,11 +32,30 @@ const gridStyle = `
     transform -translate-x-1/2 -translate-y-1/2
 `
 
-export const Grid: React.FC<GridProps> = ({isMe, user}) => {
+export const Grid: React.FC<GridProps &ChildComponentProp> = ({isMe, user, userInfo, users}) => {
     const [isFilterOn, setIsFilterOn] = useState<boolean>(false);
-    const urlParams = new URLSearchParams(window.location.href);
+    const urlParams = new URLSearchParams(window.location.search);
     const email = urlParams.get("email");
-    return (
+  
+    const [filteredFriends, setFilteredFriends] = useState<string[]>([]);
+    const fetchFilteredUsers = async (email:string) => {
+      try {
+        const friends = userInfo ? await requestSys.myFriend(email) : [];
+        console.log("filter friends", friends);
+        return friends;
+      } catch (error) {
+        console.error('즐겨찾기 친구 실패',error);
+      }
+    }
+    useEffect(() => {
+      if (isFilterOn && userInfo?.email) {
+        fetchFilteredUsers(userInfo.email).then(setFilteredFriends);
+      } else {
+        setFilteredFriends([]);
+      }
+    }, [isFilterOn, userInfo]);
+
+      return (
         <div className="realtive">
         <svg id="_레이어_3" data-name="레이어 3" xmlns="http://www.w3.org/2000/svg"
             height="280"
@@ -54,19 +74,7 @@ export const Grid: React.FC<GridProps> = ({isMe, user}) => {
         </svg>
 
         <div className={gridStyle}>
-          <div 
-            onClick={(e)=> {
-              e.stopPropagation();
-              if (email) {
-                requestSys.addFriend(email, user.name);
-              }
-            }}
-          >
-            <IconLIke 
-              isOn={isFilterOn} 
-              setIsOn={() => setIsFilterOn(prev => !prev)}
-            />   
-          </div>              
+            
           <div className="font-bold text-sm">{user.name}</div>
           <div className="font-thin text-xs">{user.email}</div>
             </div>
@@ -74,10 +82,13 @@ export const Grid: React.FC<GridProps> = ({isMe, user}) => {
     )
 }
 
-
-
-
 export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp  & GetDataProps> = ({userInfo, users, userData}) => {
+    const { isFilterOn } = useFilter();
+    //console.log("filter state",isFilterOn );
+    //console.log("userInfo.email ", userInfo ? userInfo.email : "No user info");
+    const urlParams = new URLSearchParams(window.location.search);
+    const email = urlParams.get('email');
+
     const calculateLayers = (totalUsers: number): number => {
         let layer = 0;
         let totalHexa = 1;
@@ -103,7 +114,7 @@ export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp  & G
         <div className=" ">
           <div className="absolute flex justify-center items-center">
             {userInfo ? (
-              <Grid isMe={true} user={{ email: userInfo.email, name: userInfo.name }} />
+              <Grid isMe={true} user={{ email: userInfo.email, name: userInfo.name }} userInfo={userInfo} users={users} />
             ) : (
               <p>정보없음..</p>
             )}
@@ -125,7 +136,7 @@ export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp  & G
                     `,
                   }}
                 >
-                    <Grid isMe={false} user={user} />
+                    <Grid isMe={false} user={user} userInfo={userInfo} users={users} />
                 </div>
               ))}
             </div>
@@ -153,7 +164,7 @@ export const HexagonLayout: React.FC<HexagonLayoutProp & ChildComponentProp  & G
                           `,
                         }}
                       >
-                        <Grid isMe={false} user={user} />
+                        <Grid isMe={false} user={user} userInfo={userInfo} users={users}/>
                       </div>
                     );
                   })}
