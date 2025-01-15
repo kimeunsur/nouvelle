@@ -6,20 +6,22 @@ import MainPage from "./MainPage";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 
-export type itemType = {
+export interface configType {
   color: string;
-  stack: any[];
+  stack: string[];
   external_link1: string;
   external_link2: string;
-};
+  email: string;
+}
 
 export const EditPage: React.FC = () => {
   const [userEmail, setUserEmail] = useState<string>(" ");
-  const [itemFormData, setItemFormData] = useState<itemType>({
-    color: "#ff0000",
+  const [itemFormData, setItemFormData] = useState<configType>({
+    color: "#ffffff",
     stack: [],
     external_link1: "",
     external_link2: "",
+    email: "",
   });
 
   const photos = [
@@ -32,9 +34,16 @@ export const EditPage: React.FC = () => {
   ];
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
   const handlePhotoClick = (label: string) => {
-    setSelectedPhotos((prev) =>
-      prev.includes(label) ? prev.filter((item) => item !== label) : [...prev, label]
-    );
+    const modified = selectedPhotos.includes(label)
+                    ? selectedPhotos.filter((item) => item !== label)
+                    : [...selectedPhotos, label]
+    setSelectedPhotos(modified);
+    setItemFormData((prev) => ({
+      ...prev,
+      stack: modified,
+    }));
+
+    return modified
   };
 
   const handleColorChange = useCallback((color: string) => {
@@ -47,12 +56,7 @@ export const EditPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const payload = {
-        ...itemFormData,
-        email: userEmail,
-      };
-      const result = await requestSys.storeItem(userEmail, payload);
-      console.log("item result:", result);
+      const result = await requestSys.storeItem(itemFormData);
     } catch (error) {
       console.error("Item register failed", error);
     }
@@ -60,20 +64,37 @@ export const EditPage: React.FC = () => {
 
   const navigate = useNavigate();
   const gotoMainPage = () => {
-    navigate(`/main?turnback=1&email=${userEmail}`);
+    navigate(`/main?turnback=1&email=${itemFormData.email}`);
   }
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const email = urlParams.get("email");
+
     if (email) {
       requestSys
         .getUser(email)
-        .then(() => setUserEmail(email))
-        .catch((error) => console.error("Failed to fetch user data:", error));
+        .then(() => setItemFormData((prev) => ({
+            ...prev,
+            email,
+        })))
+        .then(() => requestSys
+            .bringItem(email)
+            .then((res) => res.json())
+            .then((res) => res.ITEM)
+            .then((res) => {console.log("res", res); return res})
+            .then((res) => setItemFormData({
+                color: res.color,
+                stack: res.stack,
+                external_link1: res.external_link1,
+                external_link2: res.external_link2,
+                email: res.email
+        })))
+        .then(() => console.log("item form data", itemFormData))
+        .then(() => setSelectedPhotos(itemFormData.stack))
+        .then(() => console.log(selectedPhotos));
     }
   }, []);
 
-  //console.log("성공!",requestSys.bringItem(userEmail));
   return (
     <form className="w-[100vw] h-[100vh] bg-navyDark flex flex-row text-white text-xl justify-center items-center" onSubmit={handleSubmit}>
       <div>
@@ -114,8 +135,8 @@ export const EditPage: React.FC = () => {
                 key={index}
                 className={`relative group cursor-pointer ${
                   selectedPhotos.includes(photo.label)
-                    ? "opacity-50"
-                    : "opacity-100"
+                    ? "opacity-100"
+                    : "opacity-50"
                 } transition-opacity duration-300`}
                 onClick={() => handlePhotoClick(photo.label)}
               >

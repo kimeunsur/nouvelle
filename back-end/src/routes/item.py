@@ -36,7 +36,7 @@ def get_edit_info():
             return jsonify({"message":"user item db not founded"})
         updated_data = {}
         if item.color: updated_data['color'] = item.color,
-        if item.stack: updated_data['stack'] =item.stack,
+        if item.stack: updated_data['stack'] = item.stack,
         if item.external_link1: updated_data['external_link1'] = str(item.external_link1),
         if item.external_link2: updated_data['external_link2'] = str(item.external_link2),
         
@@ -58,8 +58,9 @@ def bring_user_items():
     if user_item_data is None:
         return jsonify({"message": "User not found"}), 404
     return jsonify({"message":"bring item successful", 
-                    "ITEM":{"color": user_item_data['color'],"stack": user_item_data['stack'],
+                    "ITEM":{"color": user_item_data['color'],
+                            "stack": user_item_data['stack'],
                             "external_link1": user_item_data['external_link1'],
-                            "external_link1":user_item_data['external_link2'],
+                            "external_link2":user_item_data['external_link2'],
                             "email": user_item_data['email']}})
     

@@ -92,7 +92,7 @@ export class MeshObject {
                         new MeshBasicMaterial({
                             color: 'green',
                             transparent: true,
-                            opacity: 0.2,
+                            opacity: 0,
                         })
                     );
                     this.transparentMesh.name = this.name+" coll";
@@ -209,5 +209,17 @@ export class Cushion extends MeshObject {
         const cushionInfo = { ...defaultCushionInfo, ...info };
 
         super(cushionInfo);
+    }
+}
+
+export class Post extends MeshObject {
+    href: string
+    constructor (info: any) {
+        super(info);
+        this.href = info.href;
+    }
+
+    togglePower() {
+        window.open(this.href, "_blank");
     }
 }

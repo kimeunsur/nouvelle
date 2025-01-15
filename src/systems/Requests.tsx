@@ -1,6 +1,6 @@
 import { signinType } from "../components/SigninForm";
 import { signupType } from "../components/SingupForm";
-import {itemType} from "../pages/EditPage";
+import { configType } from "../pages/EditPage";
 class RequestSys {
     getNaverUser = async () => {
         window.location.href = "http://127.0.0.1:5000/naver_auth/login";
@@ -97,19 +97,26 @@ class RequestSys {
         }
     }
 
-    storeItem = async (email: string, itemData: itemType) => {
+    storeItem = async (itemData: configType) => {
         try {
+            console.log('itemFormData', {
+                color: itemData.color,
+                stack: itemData.stack,
+                external_link1: itemData.external_link1,
+                external_link2: itemData.external_link2,
+                email: itemData.email,     
+            });
             const response = await fetch('http://127.0.0.1:5000/item/get_edit_info', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    "color": itemData.color,
-                    "stack": itemData.stack,
-                    "external_link1": itemData.external_link1,
-                    "external_link2": itemData.external_link2,
-                    "email": email,     
+                    color: itemData.color,
+                    stack: itemData.stack,
+                    external_link1: itemData.external_link1[0],
+                    external_link2: itemData.external_link2[0],
+                    email: itemData.email,     
                 }),
             });
             const data = await response.json();

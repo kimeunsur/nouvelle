@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react"
 import MyThree from "../three/myThree"
 import { IconHome } from "../components/icons";
+import { requestSys } from "../systems/Requests";
+import { configType } from "./EditPage";
 
 const markerStyle = `
 absolute
@@ -15,14 +17,36 @@ z-[1000]
 cursor-pointer
 transition-transform duration-500 ease-in-out hover:scale-105
 `
+
 const MyPage: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const urlParams = new URLSearchParams(window.location.search);
     const email = urlParams.get('email');
+    const [loading, setLoading] = useState<boolean>(true);
+    const [config, setConfig] = useState<configType>({
+        color: '#ffffff',
+        stack: ['react'],
+        external_link1: "",
+        external_link2: "",
+        email: "",
+    })
 
     useEffect(() => {
-
-    }, []);
+        console.log("email:", email);
+        if(email){
+            requestSys.bringItem(email)
+            .then((res) => res.json())
+            .then((res) => res.ITEM)
+            .then((res) => setConfig({
+                color: res.color,
+                stack: res.stack,
+                external_link1: res.external_link1,
+                external_link2: res.external_link2,
+                email: res.email
+            }))
+            .then(() => setLoading(false));
+        }
+    }, [email]);
 
     const goBackHandler = () => {
         window.window.location.href = `/main?turnback=1&email=${email}`
@@ -43,7 +67,12 @@ const MyPage: React.FC = () => {
                 <polygon className='fill-navyDark' points="80.2 4.83 14.93 42.51 14.93 117.88 80.2 155.57 145.47 117.88 145.47 42.51 80.2 4.83"/>
                 <polygon className='fill-yellow' points="80.2 7.85 17.54 44.02 17.54 116.37 80.2 152.54 142.85 116.37 142.85 44.02 80.2 7.85"/>
             </svg>
-            <MyThree />
+            {(!loading && config)? (
+                <MyThree config={config} />
+            ) : (
+                <div>Loading...</div>
+            )}
+
         </div>
     )
 }

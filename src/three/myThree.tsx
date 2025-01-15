@@ -4,11 +4,13 @@ import { colors } from '../properties/colors';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { useEffect } from 'react';
 import { KeyController } from './KeyController';
-import { Cushion, Lamp, MeshObject } from './MeshObject';
+import { Cushion, Lamp, MeshObject, Post } from './MeshObject';
 import { Player } from './Player';
 import { OrbitControls } from 'three/examples/jsm/Addons.js';
+import { configType } from '../pages/EditPage';
 
-const MyThree = () => {
+const MyThree: React.FC<{config: configType}> = ({config}) => {
+    console.log("setting", config);
     useEffect(() => {
         const canvas = document.getElementById('myRoom') as HTMLCanvasElement;
 
@@ -35,7 +37,7 @@ const MyThree = () => {
             1000 // far
         );
         camera.position.set(0, 3, 7);
-        camera.rotation.set(0, Math.PI/4, 0);
+        camera.rotation.set(0, Math.PI* 5/4, 0);
         scene.add(camera);
 
         //const controls = new OrbitControls(camera, renderer.domElement);
@@ -203,7 +205,7 @@ const MyThree = () => {
             width: 4.4,
             height: 0.6,
             depth: 4.4,
-            color: colors.gray,
+            color: config.color[0],
             offsetY: '0',
         });
         cannonObjects.push(floor);
@@ -218,7 +220,7 @@ const MyThree = () => {
             depth: 0.2,
             y: 2.1,
             z: 2.1,
-            color: colors.gray,
+            color: config.color[0],
             offsetY: '0',
         });
         cannonObjects.push(wallR);
@@ -233,7 +235,7 @@ const MyThree = () => {
             depth: 4.4,
             x: 2.1,
             y: 2.1,
-            color: colors.gray,
+            color: config.color[0],
             offsetY: '0',
         });
         cannonObjects.push(wallL);
@@ -318,82 +320,28 @@ const MyThree = () => {
         });
         cannonObjects.push(bookShelf);
 
-        const cushion1 = new Cushion({
-            cannonWorld,
-            cannonMaterial: defaultCannonMaterial,
-            scene,
-            loader: gltfLoader,
-            name: 'cushion1',
-            x: 1.3,
-            y: 2.0,
-            z: -0.2,
-            rotx: Math.PI/4,
-            roty: Math.PI/4,
-            mapSrc: 'tex_react.png'
-        });
-        cannonObjects.push(cushion1);
+        const cushions: Cushion[] = [];
+        for(let i=0; i<Math.min(config.stack[0].length, 5); i++){
+            console.log(config.stack[0][i]);
+            const texture = config.stack[0][i];
+            const cushion = new Cushion({
+                cannonWorld,
+                cannonMaterial: defaultCannonMaterial,
+                scene,
+                loader: gltfLoader,
+                name: `cushion${texture}`,
+                x: 1.25 + Math.random() * 0.2,
+                y: 1.9 + Math.random() * 0.2,
+                z: -0.2 + 0.2 * i,
+                rotx: Math.random() * Math.PI/3,
+                roty: Math.random() * Math.PI/3,
+                mapSrc: `tex_${texture}.png`
+            });
+            cannonObjects.push(cushion);
+            cushions.push(cushion);
+        }
 
-        const cushion2 = new Cushion({
-            cannonWorld,
-            cannonMaterial: defaultCannonMaterial,
-            scene,
-            loader: gltfLoader,
-            name: 'cushion2',
-            x: 1.5,
-            y: 1.8,
-            z: 0.0,
-            rotx: Math.PI/3,
-            roty: Math.PI/4,
-            mapSrc: 'tex_type.png'
-        });
-        cannonObjects.push(cushion2);
-
-        const cushion3 = new Cushion({
-            cannonWorld,
-            cannonMaterial: defaultCannonMaterial,
-            scene,
-            loader: gltfLoader,
-            name: 'cushion3',
-            x: 1.3,
-            y: 2.2,
-            z: 0.4,
-            rotx: Math.PI/4,
-            roty: Math.PI/5,
-            mapSrc: 'tex_three.png'
-        });
-        cannonObjects.push(cushion3);
-
-        const cushion4 = new Cushion({
-            cannonWorld,
-            cannonMaterial: defaultCannonMaterial,
-            scene,
-            loader: gltfLoader,
-            name: 'cushion4',
-            x: 1.5,
-            y: 2.1,
-            z: 0.6,
-            rotx: -Math.PI/8,
-            roty: -Math.PI/3,
-            mapSrc: 'tex_python.png'
-        });
-        cannonObjects.push(cushion4);
-
-        const cushion5 = new Cushion({
-            cannonWorld,
-            cannonMaterial: defaultCannonMaterial,
-            scene,
-            loader: gltfLoader,
-            name: 'cushion5',
-            x: 1.3,
-            y: 1.6,
-            z: 0.8,
-            rotx: -Math.PI/6,
-            roty: Math.PI/4,
-            mapSrc: 'tex_mongo.png'
-        });
-        cannonObjects.push(cushion5);
-
-        const post1 = new MeshObject({
+        const post1 = new Post({
             cannonWorld,
             cannonMaterial: defaultCannonMaterial,
             scene,
@@ -408,11 +356,12 @@ const MyThree = () => {
             color: 'yellow',
             rotx: -Math.PI/2,
             roty: Math.PI,
-            modelSrc: '/post.glb'
+            modelSrc: '/post.glb',
+            href: config.external_link1[0]
         });
         cannonObjects.push(post1);
 
-        const post2 = new MeshObject({
+        const post2 = new Post({
             cannonWorld,
             cannonMaterial: defaultCannonMaterial,
             scene,
@@ -427,7 +376,8 @@ const MyThree = () => {
             color: 'yellow',
             rotx: -Math.PI/2,
             roty: Math.PI,
-            modelSrc: '/post.glb'
+            modelSrc: '/post.glb',
+            href: config.external_link2[0]
         });
         cannonObjects.push(post2);
 
@@ -460,13 +410,13 @@ const MyThree = () => {
         scene.add(stacksprite);
         
         // Helper to create text canvas
-        function createTextTexture(text: string, size: number, color?: string) {
+        function createTextTexture(text: string, fontSize: number, scalex=300, scaley=128, color?: string) {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            canvas.width = 300;
-            canvas.height = 128;
+            canvas.width = scalex;
+            canvas.height = scaley;
             ctx!.fillStyle = color || 'white';
-            ctx!.font = `${size}px Pretendard`;
+            ctx!.font = `${fontSize}px Pretendard`;
             ctx!.textAlign = 'center';
             ctx!.textBaseline = 'middle';
             ctx!.fillText(text, canvas.width / 2, canvas.height / 2);
@@ -478,7 +428,7 @@ const MyThree = () => {
 
         // hover caption
         const captions: THREE.Sprite[] = [];
-        const stackNames = ["스택1", "스택2", "스택3", "스택4", "스택5"]
+        const stackNames = config.stack[0];
         for(let i = 0; i < stackNames.length; i++){
             captions[i] = createCaption(stackNames[i]);
             scene.add(captions[i]);
@@ -486,7 +436,7 @@ const MyThree = () => {
 
         function createCaption(text: string) {
             const captionSpriteMaterial = new THREE.SpriteMaterial({
-                map: createTextTexture(text, 20),
+                map: createTextTexture(text, 20, 200, 200),
                 transparent: true,
             });
             const captionsprite = new THREE.Sprite(captionSpriteMaterial);
@@ -497,8 +447,8 @@ const MyThree = () => {
         }
 
         // fixed text
-        const linkTexture1 = createTextTexture('링크1', 16, 'black');
-        const linkTexture2 = createTextTexture('링크2', 16, 'black');
+        const linkTexture1 = createTextTexture(config.external_link1, 16, 200, 200, 'black');
+        const linkTexture2 = createTextTexture(config.external_link2, 16, 200, 200, 'black');
 
         const linkPlaneGeometry = new THREE.PlaneGeometry(0.5, 0.5); // Adjust width and height
 
@@ -595,10 +545,24 @@ const MyThree = () => {
                 const selectedObject = intersects[0].object;
                 if (mode === "clicked") {
                     console.log(selectedObject.name);
+                    for (const item of intersects) {
+                        if (item.object.name === 'post1') {
+                            post1.togglePower();
+                            break;
+                        }
+                        if (item.object.name === 'post2') {
+                            post2.togglePower();
+                            break;
+                        }
+                        if (item.object.name === 'lamp'){
+                            lamp.togglePower();
+                            break;
+                        }
+                    }
                 } else if (hoveredObject !== selectedObject) {
                     hoveredObject = selectedObject;
                     for (let i=0; i<5; i++){
-                        if (selectedObject.name === `cushion${i+1}`){
+                        if (selectedObject.name === `cushion${config.stack[0][i]}`){
                             captions[i].position.copy(table.mesh.position).add(new THREE.Vector3(0, 0.8, 0));
                             captions[i].rotation.y = Math.PI / 6;
                             captions[i].visible = true;
@@ -611,12 +575,6 @@ const MyThree = () => {
             } else {
                 hoveredObject = null;
                 captions.map((caption) => { caption.visible = false; });
-            }
-            for (const item of intersects) {
-                if (item.object.name === 'lamp' && mode === "clicked") {
-                    lamp.togglePower();
-                    break;
-                }
             }
         }
         
