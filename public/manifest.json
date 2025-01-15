@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Nouvelle",
+  "name": "Simple 3D CV platform",
   "icons": [
     {
       "src": "favicon.ico",
