@@ -64,22 +64,21 @@ export class MeshObject {
             info.loader.load(
                 info.modelSrc,
                 (glb: GLTF) => {
-                    glb.scene.traverse((child: Object3D) => {
+                    glb.scene.traverse((child) => {
                         if((child as Mesh).isMesh) {
                             const mesh = child as Mesh;
                             mesh.castShadow = true;
-                            if (mesh.material){
-                                const texture = info.mapSrc? new TextureLoader().load(info.mapSrc) : null;
+                            const texture = info.mapSrc? new TextureLoader().load(info.mapSrc) : null;
 
-                                mesh.material = new MeshLambertMaterial({
-                                    color: texture? "white" : this.color,
-                                    map: texture || (mesh.material as MeshLambertMaterial).map,
-                                })
-                            }
+                            mesh.material = new MeshLambertMaterial({
+                                color: texture? "white" : this.color,
+                                map: texture || (mesh.material as MeshLambertMaterial).map,
+                            })
                             child.name = this.name;
                         }
                     })
                     this.mesh = glb.scene as Group;
+                    this.mesh.castShadow = true;
                     glb.scene.name = this.name;
                     glb.scene.position.set(this.x, this.y, this.z);
                     glb.scene.rotation.set(this.rotx, this.roty, this.rotz);
@@ -96,7 +95,7 @@ export class MeshObject {
                             opacity: 0,
                         })
                     );
-                    this.transparentMesh.name = this.name;
+                    this.transparentMesh.name = this.name+" coll";
                     this.transparentMesh.position.set(this.x, this.y, this.z);
                     this.transparentMesh.rotation.set(this.rotx, this.roty, this.rotz);
                     this.transparentMesh.scale.set(this.scx, this.scy, this.scz);
@@ -185,7 +184,7 @@ export class Lamp extends MeshObject {
     light: PointLight
     constructor (info: any) {
         super(info);
-        this.light = new PointLight('#ea6ab', 0, 50);
+        this.light = new PointLight('#0ea6ab', 0, 50);
     }
 
     togglePower() {

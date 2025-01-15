@@ -21,6 +21,7 @@ const MyThree = () => {
         renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2: 1);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.shadowMap.needsUpdate = true;
 
         // Scene
         const scene = new THREE.Scene();
@@ -34,7 +35,7 @@ const MyThree = () => {
             1000 // far
         );
         camera.position.set(0, 3, 7);
-        camera.rotation.set(0, Math.PI * 5/4, 0);
+        camera.rotation.set(0, Math.PI/4, 0);
         scene.add(camera);
 
         //const controls = new OrbitControls(camera, renderer.domElement);
@@ -44,18 +45,25 @@ const MyThree = () => {
 
         // Light
         const ambientLight = new THREE.AmbientLight('white', 1);
+        scene.add(ambientLight);
+
         const pointLight = new THREE.PointLight('white', 100, 100);
         pointLight.castShadow = true;
         // shadow resolution
-        pointLight.shadow.mapSize.width = 1024;
-        pointLight.shadow.mapSize.height = 1024;
+        pointLight.shadow.mapSize.width = 2048;
+        pointLight.shadow.mapSize.height = 2048;
+        pointLight.shadow.bias = -0.0001; // Try different small negative values
         pointLight.position.set(0, 10, 0);
-        scene.add(ambientLight, pointLight);
+        scene.add(pointLight);
+
+        //const helper = new THREE.CameraHelper(pointLight.shadow.camera);
+        //scene.add(helper);
 
         // Sun
-        const sunLight = new THREE.PointLight(0xffffff, 1, 500);
+        const sunLight = new THREE.PointLight(0xaaffff, 1, 500);
         sunLight.shadow.mapSize.width = 1024;
         sunLight.shadow.mapSize.height = 1024;
+        sunLight.shadow.bias = -0.0005; // Adjust for each light
         sunLight.position.set(60, 30, 0);
         scene.add(sunLight);
 
@@ -135,21 +143,44 @@ const MyThree = () => {
         });
         cannonObjects.push(water);
 
-        const land = new MeshObject({
-            cannonWorld,
-            cannonMaterial: defaultCannonMaterial,
-            scene,
-            loader: gltfLoader,
-            name: 'land',
-            width: 100,
-            height: 0.1,
-            depth: 100,
-            color: '#ba308c',
-            y: -0.05,
-            offsetY: '0',
-            modelSrc: '/land.glb',
-        });
-        cannonObjects.push(land);
+        //const land = new MeshObject({
+        //    cannonWorld,
+        //    cannonMaterial: defaultCannonMaterial,
+        //    scene,
+        //    loader: gltfLoader,
+        //    name: 'land',
+        //    width: 100,
+        //    height: 0.1,
+        //    depth: 100,
+        //    color: '#ba308c',
+        //    y: -0.05,
+        //    offsetY: '0',
+        //    modelSrc: '/land.glb',
+        //});
+        //cannonObjects.push(land);
+
+        //gltfLoader.load('/land.glb', (glb) => {
+        //    glb.scene.traverse((child) => {
+        //        const mesh = child as THREE.Mesh;
+        //        mesh.castShadow = true;
+        //        mesh.receiveShadow = true;
+        //    })
+        //    glb.scene.name = 'land';
+        //    glb.scene.position.y = -0.05;
+        //    scene.add(glb.scene)
+//
+        //    const transparentMesh = new THREE.Mesh(
+        //        new THREE.BoxGeometry(100, 0.1, 100),
+        //        new THREE.MeshBasicMaterial({
+        //            color: 'green',
+        //            transparent: true,
+        //            opacity: 0,
+        //        })
+        //    )
+        //    transparentMesh.name = 'land';
+        //    transparentMesh.position.y = -0.05;
+        //    scene.add(transparentMesh);
+        //})
 
         const stage = new MeshObject({
             cannonWorld,
@@ -221,7 +252,7 @@ const MyThree = () => {
             scx: 1.5,
             scz: 1.5,
             modelSrc: '/table.glb'
-        })
+        });
         cannonObjects.push(table);
 
         const lamp = new Lamp({
@@ -237,18 +268,17 @@ const MyThree = () => {
             z: -1,
             modelSrc: '/lamp.glb',
             callback: () => {
-                const lampLight = new THREE.PointLight('#eea6ab', 0, 50);
+                const lampLight = new THREE.PointLight('#dda6ab', 0, 50);
                 lampLight.castShadow = true;
                 lampLight.shadow.mapSize.width = 2048;
                 lampLight.shadow.mapSize.height = 2048;
                 if(lamp.mesh){
                     lampLight.position.y = 0.75;
                     lamp.mesh.add(lampLight);
-                    console.log(lampLight.position);
                 }
                 lamp.light = lampLight;
             }
-        })
+        });
         cannonObjects.push(lamp);
 
         const bookShelf = new MeshObject({
@@ -268,7 +298,7 @@ const MyThree = () => {
             scx: 1.2,
             scz: 1.2,
             modelSrc: '/bookShelf.glb'
-        })
+        });
         cannonObjects.push(bookShelf);
 
         const board = new MeshObject({
@@ -285,7 +315,7 @@ const MyThree = () => {
             z: 2,
             roty: Math.PI,
             modelSrc: '/board.glb'
-        })
+        });
         cannonObjects.push(bookShelf);
 
         const cushion1 = new Cushion({
@@ -300,7 +330,7 @@ const MyThree = () => {
             rotx: Math.PI/4,
             roty: Math.PI/4,
             mapSrc: 'tex_react.png'
-        })
+        });
         cannonObjects.push(cushion1);
 
         const cushion2 = new Cushion({
@@ -315,7 +345,7 @@ const MyThree = () => {
             rotx: Math.PI/3,
             roty: Math.PI/4,
             mapSrc: 'tex_type.png'
-        })
+        });
         cannonObjects.push(cushion2);
 
         const cushion3 = new Cushion({
@@ -330,7 +360,7 @@ const MyThree = () => {
             rotx: Math.PI/4,
             roty: Math.PI/5,
             mapSrc: 'tex_three.png'
-        })
+        });
         cannonObjects.push(cushion3);
 
         const cushion4 = new Cushion({
@@ -345,7 +375,7 @@ const MyThree = () => {
             rotx: -Math.PI/8,
             roty: -Math.PI/3,
             mapSrc: 'tex_python.png'
-        })
+        });
         cannonObjects.push(cushion4);
 
         const cushion5 = new Cushion({
@@ -360,7 +390,7 @@ const MyThree = () => {
             rotx: -Math.PI/6,
             roty: Math.PI/4,
             mapSrc: 'tex_mongo.png'
-        })
+        });
         cannonObjects.push(cushion5);
 
         const post1 = new MeshObject({
@@ -379,7 +409,7 @@ const MyThree = () => {
             rotx: -Math.PI/2,
             roty: Math.PI,
             modelSrc: '/post.glb'
-        })
+        });
         cannonObjects.push(post1);
 
         const post2 = new MeshObject({
@@ -398,7 +428,7 @@ const MyThree = () => {
             rotx: -Math.PI/2,
             roty: Math.PI,
             modelSrc: '/post.glb'
-        })
+        });
         cannonObjects.push(post2);
 
         const player = new Player({
@@ -447,12 +477,16 @@ const MyThree = () => {
         }
 
         // hover caption
-        const caption1 = createCaption("stack");
-        scene.add(caption1);
+        const captions: THREE.Sprite[] = [];
+        const stackNames = ["스택1", "스택2", "스택3", "스택4", "스택5"]
+        for(let i = 0; i < stackNames.length; i++){
+            captions[i] = createCaption(stackNames[i]);
+            scene.add(captions[i]);
+        }
 
         function createCaption(text: string) {
             const captionSpriteMaterial = new THREE.SpriteMaterial({
-                map: createTextTexture('스택', 16),
+                map: createTextTexture(text, 20),
                 transparent: true,
             });
             const captionsprite = new THREE.Sprite(captionSpriteMaterial);
@@ -509,7 +543,6 @@ const MyThree = () => {
                 player.walk(0.05, 'right', scene);
             }
             if (keyController.keys['Space'] && !player.isJumping){
-                console.log("!")
                 player.jump();
             }
         }
@@ -558,17 +591,26 @@ const MyThree = () => {
             // children items that are hit by the ray
             const intersects = raycaster.intersectObjects(scene.children)
             
-            if (mode === "clicked") {console.log(intersects[0].object.name);}
             if (intersects.length > 0) {
-                if (hoveredObject !== intersects[0].object) {
-                    //console.log(intersects[0].object.name);
-                    hoveredObject = intersects[0].object;
-                    caption1.position.copy(hoveredObject.position).add(new THREE.Vector3(0, 1, 0));
-                    caption1.visible = true;
+                const selectedObject = intersects[0].object;
+                if (mode === "clicked") {
+                    console.log(selectedObject.name);
+                } else if (hoveredObject !== selectedObject) {
+                    hoveredObject = selectedObject;
+                    for (let i=0; i<5; i++){
+                        if (selectedObject.name === `cushion${i+1}`){
+                            captions[i].position.copy(table.mesh.position).add(new THREE.Vector3(0, 0.8, 0));
+                            captions[i].rotation.y = Math.PI / 6;
+                            captions[i].visible = true;
+                            console.log(hoveredObject.name, hoveredObject.position)
+                        } else {
+                            captions[i].visible = false;
+                        }
+                    }
                 }
             } else {
                 hoveredObject = null;
-                caption1.visible = false;
+                captions.map((caption) => { caption.visible = false; });
             }
             for (const item of intersects) {
                 if (item.object.name === 'lamp' && mode === "clicked") {
