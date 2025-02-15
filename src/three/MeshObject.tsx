@@ -69,12 +69,17 @@ export class MeshObject {
                             const mesh = child as Mesh;
                             mesh.castShadow = true;
                             const texture = info.mapSrc? new TextureLoader().load(info.mapSrc) : null;
-
+                            
                             mesh.material = new MeshLambertMaterial({
                                 color: texture? "white" : this.color,
                                 map: texture || (mesh.material as MeshLambertMaterial).map,
                             })
                             child.name = this.name;
+                            
+                            if (child.castShadow) {
+                                console.log(`Shadow caster: ${child.name}`);
+                            }
+                            
                         }
                     })
                     this.mesh = glb.scene as Group;

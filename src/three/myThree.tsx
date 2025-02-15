@@ -33,8 +33,8 @@ const MyThree: React.FC<{config: configType}> = ({config}) => {
         const camera = new THREE.PerspectiveCamera(
             60, // fov
             window.innerWidth / window.innerHeight, // aspect
-            0.1, // near
-            1000 // far
+            0.5, // near
+            100 // far
         );
         camera.position.set(0, 3, 7);
         camera.rotation.set(0, Math.PI* 5/4, 0);
@@ -55,7 +55,7 @@ const MyThree: React.FC<{config: configType}> = ({config}) => {
         pointLight.shadow.mapSize.width = 2048;
         pointLight.shadow.mapSize.height = 2048;
         pointLight.shadow.bias = -0.0001; // Try different small negative values
-        pointLight.position.set(0, 10, 0);
+        pointLight.position.set(0, 20, 0);
         scene.add(pointLight);
 
         //const helper = new THREE.CameraHelper(pointLight.shadow.camera);
